@@ -17,6 +17,8 @@
 #define GICD_TYPER			0x4
 #define GICD_IGROUP0			0x80
 #define GICD_IGRPMOD0			0xd00
+#define GICD_IGROUPR0E			0x1000
+#define GICD_IGRPMODR0E			0x3400
 
 #define GICD_CTLR_EnableGrp0		(1 << 0)
 #define GICD_CTLR_EnableGrp1ns		(1 << 1)
@@ -24,10 +26,12 @@
 #define GICD_CTLR_ARE_S			(1 << 4)
 #define GICD_CTLR_ARE_NS		(1 << 5)
 #define GICD_TYPER_ITLineNumber		0x1f
+#define GICD_TYPER_ESPI_range(r)	(((r) >> 27) & 0x1f)
 
 #define GICR_WAKER			0x14
 
 #define GICR_TYPER			0x8
+#define GICR_TYPER_PPInum(r)		(((r) >> 27) & 0x1f)
 #define GICR_IGROUP0			0x80
 #define GICR_IGRPMOD0			0xD00
 
@@ -72,8 +76,10 @@ void gic_secure_init_primary(void)
 		typer = raw_readl(gicr_ptr + GICR_TYPER);
 
 		gicr_ptr += 0x10000; /* Go to SGI_Base */
-		raw_writel(~0x0, gicr_ptr + GICR_IGROUP0);
-		raw_writel(0x0, gicr_ptr + GICR_IGRPMOD0);
+		for (i = 0; i < (1 + GICR_TYPER_PPInum(typer)); i++) {
+			raw_writel(~0x0, gicr_ptr + GICR_IGROUP0 + i * 4);
+			raw_writel(0x0, gicr_ptr + GICR_IGRPMOD0 + i * 4);
+		}
 
 		/* Next redist */
 		gicr_ptr += 0x10000;
@@ -86,6 +92,10 @@ void gic_secure_init_primary(void)
 	for (i = 1; i < (typer & GICD_TYPER_ITLineNumber); i++) {
 		raw_writel(~0x0, gicd_base + GICD_IGROUP0 + i * 4);
 		raw_writel(0x0, gicd_base + GICD_IGRPMOD0 + i * 4);
+	}
+	for (i = 0; i < GICD_TYPER_ESPI_range(typer); i++) {
+		raw_writel(~0x0, gicd_base + GICD_IGROUPR0E + i * 4);
+		raw_writel(0x0, gicd_base + GICD_IGRPMODR0E + i * 4);
 	}
 }
 
