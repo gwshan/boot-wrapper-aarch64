@@ -48,6 +48,13 @@ _start:
 	orr	x0, x0, #(1 << 16)		// AP key enable
 	orr	x0, x0, #(1 << 17)		// AP insn enable
 1:
+	/* Enable TME if present */
+	mrs	x1, id_aa64isar0_el1
+	ubfx	x1, x1, #24, #4
+	cbz	x1, 1f
+
+	orr	x0, x0, #(1 << 34)		// TME enable
+1:
 #ifndef KERNEL_32
 	orr	x0, x0, #(1 << 10)		// 64-bit EL2
 #endif
