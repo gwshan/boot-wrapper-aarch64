@@ -62,6 +62,17 @@ _start:
 
 	msr	cptr_el3, xzr			// Disable copro. traps to EL3
 
+	mov	x0, xzr
+	mrs	x1, id_aa64dfr0_el1
+	ubfx	x1, x1, #32, #4
+	cbz	x1, 1f
+
+	// Enable SPE for the non-secure world.
+	ldr	x1, =(0x3 << 12)
+	orr	x0, x0, x1
+
+1:	msr	mdcr_el3, x0			// Disable traps to EL3
+
 	mrs	x0, id_aa64pfr0_el1
 	ubfx	x0, x0, #32, #4			// SVE present?
 	cbz	x0, 1f				// Skip SVE init if not
