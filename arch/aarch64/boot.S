@@ -55,6 +55,13 @@ _start:
 
 	orr	x0, x0, #(1 << 34)		// TME enable
 1:
+	/* Enable FGT if present */
+	mrs	x1, id_aa64mmfr0_el1
+	ubfx	x1, x1, #56, #4
+	cbz	x1, 1f
+
+	orr	x0, x0, #(1 << 27)		// FGT enable
+1:
 #ifndef KERNEL_32
 	orr	x0, x0, #(1 << 10)		// 64-bit EL2
 #endif
