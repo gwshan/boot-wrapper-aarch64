@@ -62,6 +62,14 @@ _start:
 
 	orr	x0, x0, #(1 << 27)		// FGT enable
 1:
+	/* Enable MTE if present */
+	mrs	x10, id_aa64pfr1_el1
+	ubfx	x10, x10, #8, #4
+	cmp	x10, #2
+	b.lt	1f
+
+	orr	x0, x0, #(1 << 26)		// ATA enable
+1:
 #ifndef KERNEL_32
 	orr	x0, x0, #(1 << 10)		// 64-bit EL2
 #endif
