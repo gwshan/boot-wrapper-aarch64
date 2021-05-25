@@ -10,7 +10,7 @@
 # VE
 PHYS_OFFSET	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findmem.pl $(KERNEL_DTB))
 UART_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
-SYSREGS_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg')
+SYSREGS_BASE	:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg' 2> /dev/null)
 CNTFRQ		:= 0x01800000	# 24Mhz
 
 CPU_IDS		:= $(shell perl -I $(top_srcdir) $(top_srcdir)/findcpuids.pl $(KERNEL_DTB))
@@ -19,7 +19,7 @@ NR_CPUS         := $(shell echo $(CPU_IDS) | tr ',' ' ' | wc -w)
 DEFINES		= -DCNTFRQ=$(CNTFRQ)
 DEFINES		+= -DCPU_IDS=$(CPU_IDS)
 DEFINES		+= -DNR_CPUS=$(NR_CPUS)
-DEFINES		+= -DSYSREGS_BASE=$(SYSREGS_BASE)
+DEFINES		+= $(if $(SYSREGS_BASE), -DSYSREGS_BASE=$(SYSREGS_BASE), )
 DEFINES		+= -DUART_BASE=$(UART_BASE)
 DEFINES		+= -DSTACK_SIZE=256
 

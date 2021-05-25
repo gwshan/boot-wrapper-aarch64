@@ -23,10 +23,12 @@
 
 #define PL011(reg)	((void *)UART_BASE + PL011_##reg)
 
+#ifdef SYSREGS_BASE
 #define V2M_SYS_CFGDATA		0xa0
 #define V2M_SYS_CFGCTRL		0xa4
 
 #define V2M_SYS(reg)	((void *)SYSREGS_BASE + V2M_SYS_##reg)
+#endif
 
 static void print_string(const char *str)
 {
@@ -59,6 +61,7 @@ void init_platform(void)
 
 	print_string("Boot-wrapper v0.2\r\n\r\n");
 
+#ifdef SYSREGS_BASE
 	/*
 	 * CLCD output site MB
 	 */
@@ -66,4 +69,5 @@ void init_platform(void)
 	/* START | WRITE | MUXFPGA | SITE_MB */
 	raw_writel((1 << 31) | (1 << 30) | (7 << 20) | (0 << 16),
 				V2M_SYS(CFGCTRL));
+#endif
 }
