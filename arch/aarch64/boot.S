@@ -32,7 +32,6 @@ _start:
 	ldr	x1, =flag_no_el3
 	str	w0, [x1]
 
-	bl	setup_stack
 	b	start_no_el3
 
 1:	mov	x0, #0x30			// RES1
