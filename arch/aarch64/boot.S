@@ -26,26 +26,26 @@
 	 *   PSCI is not supported when entered in this exception level.
 	 */
 ASM_FUNC(_start)
-	cpuid	x0, x1
-	bl	find_logical_id
-	cmp	x0, #MPIDR_INVALID
-	beq	err_invalid_id
-	bl	setup_stack
+	mrs	x0, CurrentEL
+	cmp	x0, #CURRENTEL_EL3
+	b.eq	reset_at_el3
+	cmp	x0, #CURRENTEL_EL2
+	b.eq	reset_at_el2
+	cmp	x0, #CURRENTEL_EL1
+	b.eq	reset_at_el1
+
+	/* Booting at EL0 is not supported */
+	b	.
 
 	/*
 	 * EL3 initialisation
 	 */
-	mrs	x0, CurrentEL
-	cmp	x0, #CURRENTEL_EL3
-	b.eq	1f
+reset_at_el3:
+	mov_64	x0, SCTLR_EL3_RESET
+	msr	sctlr_el3, x0
+	isb
 
-	mov	w0, #1
-	ldr	x1, =flag_no_el3
-	str	w0, [x1]
-
-	b	start_no_el3
-
-1:	mov	x0, #0x30			// RES1
+	mov	x0, #0x30			// RES1
 	orr	x0, x0, #(1 << 0)		// Non-secure EL1
 	orr	x0, x0, #(1 << 8)		// HVC enable
 
@@ -143,9 +143,53 @@ ASM_FUNC(_start)
 	ldr	x0, =COUNTER_FREQ
 	msr	cntfrq_el0, x0
 
+	cpuid	x0, x1
+	bl	find_logical_id
+	cmp	x0, #MPIDR_INVALID
+	b.eq	err_invalid_id
+	bl	setup_stack
+
 	bl	gic_secure_init
 
 	b	start_el3
+
+	/*
+	 * EL2 initialization
+	 */
+reset_at_el2:
+	// Ensure E2H is not in use
+	mov_64	x0, HCR_EL2_RESET
+	msr	hcr_el2, x0
+	isb
+
+	mov_64	x0, SCTLR_EL2_RESET
+	msr	sctlr_el2, x0
+	isb
+
+	b	reset_no_el3
+
+	/*
+	 * EL1 initialization
+	 */
+reset_at_el1:
+	mov_64	x0, SCTLR_EL1_RESET
+	msr	sctlr_el1, x0
+	isb
+
+	b	reset_no_el3
+
+reset_no_el3:
+	cpuid	x0, x1
+	bl	find_logical_id
+	cmp	x0, #MPIDR_INVALID
+	b.eq	err_invalid_id
+	bl	setup_stack
+
+	mov	w0, #1
+	ldr	x1, =flag_no_el3
+	str	w0, [x1]
+
+	b	start_no_el3
 
 err_invalid_id:
 	b	.

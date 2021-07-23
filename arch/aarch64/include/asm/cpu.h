@@ -14,6 +14,35 @@
 #define MPIDR_ID_BITS		0xff00ffffff
 
 #define CURRENTEL_EL3		(3 << 2)
+#define CURRENTEL_EL2		(2 << 2)
+#define CURRENTEL_EL1		(1 << 2)
+
+/*
+ * RES1 bit definitions definitions as of ARM DDI 0487G.b
+ *
+ * These includes bits which are RES1 in some configurations.
+ */
+#define SCTLR_EL3_RES1							\
+	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(18) | BIT(16) |	\
+	 BIT(11) | BIT(5) | BIT(4))
+
+#define SCTLR_EL2_RES1							\
+	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(20) | BIT(18) |	\
+	 BIT(16) | BIT(11) | BIT(5) | BIT(4))
+
+#define SCTLR_EL1_RES1							\
+	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(20) | BIT(11) |	\
+	 BIT(8) | BIT(7) | BIT(4))
+
+#define HCR_EL2_RES1		(BIT(1))
+
+/*
+ * Initial register values required for the boot-wrapper to run out-of-reset.
+ */
+#define SCTLR_EL3_RESET		SCTLR_EL3_RES1
+#define SCTLR_EL2_RESET		SCTLR_EL2_RES1
+#define SCTLR_EL1_RESET		SCTLR_EL1_RES1
+#define HCR_EL2_RESET		HCR_EL2_RES1
 
 #define ID_AA64PFR0_EL1_GIC	BITS(27, 24)
 
@@ -43,7 +72,6 @@
 #define ZCR_EL3_LEN_MAX		0xf
 
 #define SCTLR_EL1_CP15BEN	(1 << 5)
-#define SCTLR_EL1_RES1		(3 << 28 | 3 << 22 | 1 << 11)
 
 #ifdef KERNEL_32
 /*
