@@ -52,6 +52,19 @@ void print_string(const char *str)
 		print_char(*str++);
 }
 
+#define HEX_CHARS_PER_LONG	(2 * sizeof(long))
+#define HEX_CHARS		"0123456789abcdef"
+
+void print_ulong_hex(unsigned long val)
+{
+	int i;
+
+	for (i = HEX_CHARS_PER_LONG - 1; i >= 0; i--) {
+		int v = (val >> (4 * i)) & 0xf;
+		print_char(HEX_CHARS[v]);
+	}
+}
+
 void init_uart(void)
 {
 	/*

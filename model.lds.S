@@ -35,46 +35,54 @@ SECTIONS
 	 * the boot section's *(.data)
 	 */
 	.kernel (PHYS_OFFSET + KERNEL_OFFSET): {
-		kernel = .;
+		kernel__start = .;
 		KERNEL
+		kernel__end = .;
 	}
 
 #ifdef XEN
 	.xen (PHYS_OFFSET + XEN_OFFSET): {
-		xen = .;
+		xen__start = .;
 		XEN
+		xen__end = .;
 	}
 
-	entrypoint = xen;
+	entrypoint = xen__start;
 #else
-	entrypoint = kernel;
+	entrypoint = kernel__start;
 #endif
 
 	.dtb (PHYS_OFFSET + FDT_OFFSET): {
+		dtb__start = .;
 		dtb = .;
 		./fdt.dtb
+		dtb__end = .;
 	}
 
 #ifdef USE_INITRD
 	.filesystem (PHYS_OFFSET + FS_OFFSET): {
-		filesystem = .;
+		filesystem__start = .;
 		FILESYSTEM
-		fs_size = . - filesystem;
+		filesystem__end = .;
 	}
 #endif
 
 	.boot PHYS_OFFSET: {
+		text__start = .;
 		*(.init)
 		*(.text*)
 		*(.data* .rodata* .bss* COMMON)
 		*(.vectors)
 		*(.stack)
 		PROVIDE(etext = .);
+		text__end = .;
 	}
 
 	.mbox (PHYS_OFFSET + MBOX_OFFSET): {
+		mbox__start = .;
 		mbox = .;
 		QUAD(0x0)
+		mbox__end = .;
 	}
 
 	ASSERT(etext <= (PHYS_OFFSET + TEXT_LIMIT), ".text overflow!")

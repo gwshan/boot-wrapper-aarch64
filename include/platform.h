@@ -11,6 +11,8 @@
 
 void print_char(char c);
 void print_string(const char *str);
+void print_ulong_hex(unsigned long val);
+
 void init_uart(void);
 
 void init_platform(void);

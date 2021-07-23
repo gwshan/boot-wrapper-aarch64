@@ -14,6 +14,32 @@ static void announce_bootwrapper(void)
 	print_string("Boot-wrapper v0.2\r\n");
 }
 
+#define announce_object(object, desc)				\
+do {								\
+	extern char object##__start[];				\
+	extern char object##__end[];				\
+	print_string("[");					\
+	print_ulong_hex((unsigned long)object##__start);	\
+	print_string("..");					\
+	print_ulong_hex((unsigned long)object##__end);		\
+	print_string("] => " desc "\r\n");			\
+} while (0)
+
+static void announce_objects(void)
+{
+	print_string("Memory layout:\r\n");
+	announce_object(text, "boot-wrapper");
+	announce_object(mbox, "mbox");
+	announce_object(kernel, "kernel");
+#ifdef XEN
+	announce_object(xen, "xen");
+#endif
+	announce_object(dtb, "dtb");
+#ifdef USE_INITRD
+	announce_object(filesystem, "initrd");
+#endif
+}
+
 void announce_arch(void);
 
 void cpu_init_bootwrapper(void)
@@ -22,6 +48,7 @@ void cpu_init_bootwrapper(void)
 		init_uart();
 		announce_bootwrapper();
 		announce_arch();
+		announce_objects();
 		print_string("\r\n");
 		init_platform();
 	}
