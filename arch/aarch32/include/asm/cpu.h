@@ -13,8 +13,8 @@
 #define MPIDR_INVALID		(-1)
 
 /* Only RES1 bits and CP15 barriers for the kernel */
-#define HSCTLR_RESET		(3 << 28 | 3 << 22 | 1 << 18 | 1 << 16 | 1 << 11 | 3 << 4)
-#define SCTLR_RESET		(3 << 22 | 1 << 11 | 1 << 5 | 3 << 4)
+#define HSCTLR_KERNEL		(3 << 28 | 3 << 22 | 1 << 18 | 1 << 16 | 1 << 11 | 3 << 4)
+#define SCTLR_KERNEL		(3 << 22 | 1 << 11 | 1 << 5 | 3 << 4)
 
 #define PSR_SVC			0x13
 #define PSR_HYP			0x1a

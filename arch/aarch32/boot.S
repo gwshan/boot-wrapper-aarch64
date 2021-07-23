@@ -76,10 +76,10 @@ ASM_FUNC(jump_kernel)
 	push	{r0 - r3}
 	mov	r5, sp
 
-	ldr	r0, =HSCTLR_RESET
+	ldr	r0, =HSCTLR_KERNEL
 	mcr	p15, 4, r0, c1, c0, 0		@ HSCTLR
 
-	ldr	r0, =SCTLR_RESET
+	ldr	r0, =SCTLR_KERNEL
 	mcr	p15, 0, r0, c1, c0, 0		@ SCTLR
 
 	/* Reset our stack pointer */

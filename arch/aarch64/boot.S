@@ -140,10 +140,10 @@ ASM_FUNC(jump_kernel)
 	mov	x22, x3
 	mov	x23, x4
 
-	ldr	x0, =SCTLR_EL1_RESET
+	ldr	x0, =SCTLR_EL1_KERNEL
 	msr	sctlr_el1, x0
 
-	ldr	x0, =SCTLR_EL2_RESET
+	ldr	x0, =SCTLR_EL2_KERNEL
 	msr	sctlr_el2, x0
 
 	cpuid	x0, x1
