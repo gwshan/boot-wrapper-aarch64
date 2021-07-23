@@ -9,9 +9,17 @@
 
 #include <cpu.h>
 
+	/* Load a 64-bit value using immediates */
+	.macro	mov_64 dest, val
+	mov	\dest, #(((\val) >>  0) & 0xffff)
+	movk	\dest, #(((\val) >> 16) & 0xffff), lsl #16
+	movk	\dest, #(((\val) >> 32) & 0xffff), lsl #32
+	movk	\dest, #(((\val) >> 48) & 0xffff), lsl #48
+	.endm
+
 	/* Put MPIDR into \dest, clobber \tmp and flags */
 	.macro cpuid dest, tmp
 	mrs	\dest, mpidr_el1
-	ldr	\tmp, =MPIDR_ID_BITS
+	mov_64	\tmp, MPIDR_ID_BITS
 	ands	\dest, \dest, \tmp
 	.endm
