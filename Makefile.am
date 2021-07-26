@@ -33,7 +33,10 @@ PSCI_CPU_ON	:= 0xc4000003
 endif
 PSCI_CPU_OFF	:= 0x84000002
 
-OFILES		=
+COMMON_SRC	:= common/
+COMMON_OBJ	:= boot.o bakery_lock.o platform.o lib.o
+
+ARCH_OBJ	:= boot.o stack.o utils.o
 
 if BOOTWRAPPER_32
 CPPFLAGS	+= -DBOOTWRAPPER_32
@@ -45,8 +48,8 @@ ARCH_SRC	:= arch/aarch64/
 endif
 
 if PSCI
-BOOTMETHOD	:= psci.o
-OFILES		+= psci.o
+ARCH_OBJ	+= psci.o
+COMMON_OBJ	+= psci.o
 PSCI_NODE	:= psci {				\
 			compatible = \"arm,psci\";	\
 			method = \"smc\";		\
@@ -55,7 +58,7 @@ PSCI_NODE	:= psci {				\
 		   };
 CPU_NODES	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/addpsci.pl $(KERNEL_DTB))
 else
-BOOTMETHOD	:= spin.o
+ARCH_OBJ	+= spin.o
 PSCI_NODE	:=
 CPU_NODES	:=
 endif
@@ -65,13 +68,13 @@ GIC_DIST_BASE	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findbase.pl $(KERNE
 GIC_RDIST_BASE	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findbase.pl $(KERNEL_DTB) 1 'arm,gic-v3')
 DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
 DEFINES		+= -DGIC_RDIST_BASE=$(GIC_RDIST_BASE)
-GIC		:= gic-v3.o
+COMMON_OBJ	+= gic-v3.o
 else
 GIC_DIST_BASE	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findbase.pl $(KERNEL_DTB) 0 'arm,cortex-a15-gic')
 GIC_CPU_BASE	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findbase.pl $(KERNEL_DTB) 1 'arm,cortex-a15-gic')
 DEFINES		+= -DGIC_CPU_BASE=$(GIC_CPU_BASE)
 DEFINES		+= -DGIC_DIST_BASE=$(GIC_DIST_BASE)
-GIC		:= gic.o
+COMMON_OBJ	+= gic.o
 endif
 
 if KERNEL_32
@@ -125,8 +128,7 @@ CFLAGS		+= -Wall -fomit-frame-pointer
 CFLAGS		+= -ffunction-sections -fdata-sections
 LDFLAGS		+= --gc-sections
 
-OFILES		+= boot_common.o bakery_lock.o platform.o $(GIC) lib.o
-OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o $(BOOTMETHOD) utils.o)
+OBJ		:= $(addprefix $(ARCH_SRC),$(ARCH_OBJ)) $(addprefix $(COMMON_SRC),$(COMMON_OBJ))
 
 # Don't lookup all prerequisites in $(top_srcdir), only the source files. When
 # building outside the source tree $(ARCH_SRC) needs to be created.
@@ -136,18 +138,21 @@ vpath %.S $(top_srcdir)
 
 all: $(IMAGE)
 
-CLEANFILES = $(IMAGE) linux-system.axf xen-system.axf $(OFILES) model.lds fdt.dtb
+CLEANFILES = $(IMAGE) linux-system.axf xen-system.axf $(OBJ) model.lds fdt.dtb
 
-$(IMAGE): $(OFILES) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM) $(XEN_IMAGE)
-	$(LD) $(LDFLAGS) $(OFILES) -o $@ --script=model.lds
+$(IMAGE): $(OBJ) model.lds fdt.dtb $(KERNEL_IMAGE) $(FILESYSTEM) $(XEN_IMAGE)
+	$(LD) $(LDFLAGS) $(OBJ) -o $@ --script=model.lds
 
 $(ARCH_SRC):
+	$(MKDIR_P) $@
+
+$(COMMON_SRC):
 	$(MKDIR_P) $@
 
 %.o: %.S Makefile | $(ARCH_SRC)
 	$(CC) $(CPPFLAGS) -D__ASSEMBLY__ $(CFLAGS) $(DEFINES) -c -o $@ $<
 
-%.o: %.c Makefile
+%.o: %.c Makefile | $(COMMON_SRC)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 model.lds: $(LD_SCRIPT) Makefile

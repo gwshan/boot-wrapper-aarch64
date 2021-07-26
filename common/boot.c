@@ -1,5 +1,5 @@
 /*
- * boot_common.c - common spin function for all boot methods
+ * boot.c - common spin function for all boot methods
  *
  * Copyright (C) 2015 ARM Limited. All rights reserved.
  *
