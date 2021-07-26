@@ -9,9 +9,13 @@
 #ifndef __ASM_AARCH64_CPU_H
 #define __ASM_AARCH64_CPU_H
 
+#include <bits.h>
+
 #define MPIDR_ID_BITS		0xff00ffffff
 
 #define CURRENTEL_EL3		(3 << 2)
+
+#define ID_AA64PFR0_EL1_GIC	BITS(27, 24)
 
 /*
  * RES1 bits,  little-endian, caches and MMU off, no alignment checking,
@@ -28,6 +32,12 @@
 #define SPSR_HYP		(0x1a << 0)	/* M[3:0] = hyp, M[4] = AArch32 */
 
 #define CPTR_EL3_EZ		(1 << 8)
+
+#define ICC_SRE_EL2		S3_4_C12_C9_5
+#define ICC_SRE_EL3		S3_6_C12_C12_5
+#define ICC_CTLR_EL1		S3_0_C12_C12_4
+#define ICC_CTLR_EL3		S3_6_C12_C12_4
+#define ICC_PMR_EL1		S3_0_C4_C6_0
 
 #define ZCR_EL3			s3_6_c1_c2_0
 #define ZCR_EL3_LEN_MAX		0xf
@@ -57,20 +67,27 @@
 
 #define sevl()		asm volatile ("sevl\n" : : : "memory")
 
+#define __str(def)	#def
+
+#define mrs(reg)							\
+({									\
+	unsigned long __mrs_val;					\
+	asm volatile("mrs %0, " __str(reg) : "=r" (__mrs_val));		\
+	__mrs_val;							\
+})
+
+#define msr(reg, val)							\
+do {									\
+	unsigned long __msr_val = val;					\
+	asm volatile("msr " __str(reg) ", %0" : : "r" (__msr_val));	\
+} while (0)
+
+#define mrs_field(reg, field) \
+	BITS_EXTRACT(mrs(reg), (reg##_##field))
+
 static inline unsigned long read_mpidr(void)
 {
-	unsigned long mpidr;
-
-	asm volatile ("mrs	%0, mpidr_el1\n" : "=r" (mpidr));
-	return mpidr & MPIDR_ID_BITS;
-}
-
-static inline uint64_t read_id_aa64pfr0(void)
-{
-	uint64_t val;
-
-	asm volatile ("mrs	%0, id_aa64pfr0_el1\n" : "=r" (val));
-	return val;
+	return mrs(mpidr_el1) & MPIDR_ID_BITS;
 }
 
 static inline void iciallu(void)
@@ -80,7 +97,7 @@ static inline void iciallu(void)
 
 static inline int has_gicv3_sysreg(void)
 {
-	return !!((read_id_aa64pfr0() >> 24) & 0xf);
+	return !!mrs_field(ID_AA64PFR0_EL1, GIC);
 }
 
 #endif /* !__ASSEMBLY__ */
