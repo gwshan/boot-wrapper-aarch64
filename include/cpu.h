@@ -25,5 +25,7 @@
 
 unsigned int find_logical_id(unsigned long mpidr);
 
+#define this_cpu_logical_id()	find_logical_id(read_mpidr())
+
 #endif /* !__ASSEMBLY__ */
 #endif

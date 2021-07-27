@@ -31,14 +31,13 @@ void gic_secure_init(void)
 {
 	unsigned int i;
 
-	uint32_t cpu = read_mpidr();
 	void *gicd_base = (void *)GIC_DIST_BASE;
 	void *gicc_base = (void *)GIC_CPU_BASE;
 
 	/* Set local interrupts to Group 1 (those fields are banked) */
 	raw_writel(~0, gicd_base + GICD_IGROUPRn);
 
-	if (cpu == 0) {
+	if (this_cpu_logical_id() == 0) {
 		uint32_t typer = raw_readl(gicd_base + GICD_TYPER);
 
 		/* Set SPIs to Group 1 */

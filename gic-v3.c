@@ -101,8 +101,6 @@ void gic_secure_init_primary(void)
 
 void gic_secure_init(void)
 {
-	uint32_t cpu = read_mpidr();
-
 	uint32_t sre;
 
 	/*
@@ -113,7 +111,7 @@ void gic_secure_init(void)
 	if (!has_gicv3_sysreg())
 		return;
 
-	if (cpu == 0)
+	if (this_cpu_logical_id() == 0)
 		gic_secure_init_primary();
 
 	sre = gic_read_icc_sre();

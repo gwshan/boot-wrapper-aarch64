@@ -35,7 +35,7 @@ static int psci_cpu_on(unsigned long target_mpidr, unsigned long address)
 {
 	int ret;
 	unsigned int cpu = find_logical_id(target_mpidr);
-	unsigned int this_cpu = find_logical_id(read_mpidr());
+	unsigned int this_cpu = this_cpu_logical_id();
 
 	if (cpu == MPIDR_INVALID)
 		return PSCI_RET_INVALID_PARAMETERS;
@@ -49,8 +49,7 @@ static int psci_cpu_on(unsigned long target_mpidr, unsigned long address)
 
 static int psci_cpu_off(void)
 {
-	unsigned long mpidr = read_mpidr();
-	unsigned int cpu = find_logical_id(mpidr);
+	unsigned int cpu = this_cpu_logical_id();
 
 	if (cpu == MPIDR_INVALID)
 		return PSCI_RET_DENIED;
