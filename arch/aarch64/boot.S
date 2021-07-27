@@ -149,6 +149,8 @@ reset_at_el3:
 	b.eq	err_invalid_id
 	bl	setup_stack
 
+	bl	cpu_init_bootwrapper
+
 	bl	gic_secure_init
 
 	b	start_el3
@@ -188,6 +190,8 @@ reset_no_el3:
 	mov	w0, #1
 	ldr	x1, =flag_no_el3
 	str	w0, [x1]
+
+	bl	cpu_init_bootwrapper
 
 	b	start_no_el3
 

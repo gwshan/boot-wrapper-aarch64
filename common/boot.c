@@ -12,8 +12,6 @@
 extern unsigned long entrypoint;
 extern unsigned long dtb;
 
-void init_platform(void);
-
 void __noreturn jump_kernel(unsigned long address,
 			    unsigned long a0,
 			    unsigned long a1,
@@ -62,8 +60,6 @@ void __noreturn first_spin(unsigned int cpu, unsigned long *mbox,
 			   unsigned long invalid)
 {
 	if (cpu == 0) {
-		init_platform();
-
 		*mbox = (unsigned long)&entrypoint;
 		sevl();
 		spin(mbox, invalid, 1);

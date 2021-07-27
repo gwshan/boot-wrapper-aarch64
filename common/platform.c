@@ -1,5 +1,5 @@
 /*
- * platform.c - code to initialise everything required when first booting.
+ * platform.c - Platform initialization and I/O.
  *
  * Copyright (C) 2015 ARM Limited. All rights reserved.
  *
@@ -7,6 +7,7 @@
  * found in the LICENSE.txt file.
  */
 
+#include <cpu.h>
 #include <stdint.h>
 
 #include <asm/io.h>
@@ -30,7 +31,7 @@
 #define V2M_SYS(reg)	((void *)SYSREGS_BASE + V2M_SYS_##reg)
 #endif
 
-static void print_string(const char *str)
+void print_string(const char *str)
 {
 	uint32_t flags;
 
@@ -47,7 +48,7 @@ static void print_string(const char *str)
 	}
 }
 
-void init_platform(void)
+void init_uart(void)
 {
 	/*
 	 * UART initialisation (38400 8N1)
@@ -58,9 +59,10 @@ void init_platform(void)
 	raw_writel(0x70,	PL011(UART_LCR_H));
 	/* Enable the UART, TXen and RXen */
 	raw_writel(0x301,	PL011(UARTCR));
+}
 
-	print_string("Boot-wrapper v0.2\r\n\r\n");
-
+void init_platform(void)
+{
 #ifdef SYSREGS_BASE
 	/*
 	 * CLCD output site MB

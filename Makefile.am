@@ -34,7 +34,7 @@ endif
 PSCI_CPU_OFF	:= 0x84000002
 
 COMMON_SRC	:= common/
-COMMON_OBJ	:= boot.o bakery_lock.o platform.o lib.o
+COMMON_OBJ	:= boot.o bakery_lock.o platform.o lib.o init.o
 
 ARCH_OBJ	:= boot.o stack.o utils.o
 

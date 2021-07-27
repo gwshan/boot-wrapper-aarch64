@@ -48,6 +48,9 @@ ASM_FUNC(_start)
 	mov	r0, #1
 	ldr	r1, =flag_no_el3
 	str	r0, [r1]
+
+	bl	cpu_init_bootwrapper
+
 	b	start_no_el3
 
 _switch_monitor:
@@ -70,6 +73,8 @@ _monitor:
 
 	ldr	r0, =COUNTER_FREQ
 	mcr	p15, 0, r0, c14, c0, 0		@ CNTFRQ
+
+	bl	cpu_init_bootwrapper
 
 	bl	gic_secure_init
 
