@@ -155,7 +155,7 @@ $(COMMON_SRC):
 %.o: %.S Makefile | $(ARCH_SRC)
 	$(CC) $(CPPFLAGS) -D__ASSEMBLY__ $(CFLAGS) $(DEFINES) -c -o $@ $<
 
-%.o: %.c Makefile | $(COMMON_SRC)
+%.o: %.c Makefile | $(ARCH_SRC) $(COMMON_SRC)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 model.lds: $(LD_SCRIPT) Makefile

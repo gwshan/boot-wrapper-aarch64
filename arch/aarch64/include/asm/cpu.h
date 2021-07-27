@@ -34,7 +34,40 @@
 	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(20) | BIT(11) |	\
 	 BIT(8) | BIT(7) | BIT(4))
 
-#define HCR_EL2_RES1		(BIT(1))
+#define MDCR_EL3_NSPB_NS_NOTRAP			(UL(3) << 12)
+#define MDCR_EL3_NSTB_NS_NOTRAP			(UL(3) << 24)
+#define MDCR_EL3_SBRBE_NOTRAP_NOPROHIBIT	(UL(3) << 32)
+#define MDCR_EL3_ENPMSN				BIT(36)
+
+#define SCR_EL3_RES1			BITS(5, 4)
+#define SCR_EL3_NS			BIT(0)
+#define SCR_EL3_HCE			BIT(8)
+#define SCR_EL3_RW			BIT(10)
+#define SCR_EL3_APK			BIT(16)
+#define SCR_EL3_API			BIT(17)
+#define SCR_EL3_ATA			BIT(26)
+#define SCR_EL3_FGTEN			BIT(27)
+#define SCR_EL3_ECVEN			BIT(28)
+#define SCR_EL3_TME			BIT(34)
+
+#define HCR_EL2_RES1			BIT(1)
+
+#define ID_AA64DFR0_EL1_PMSVER		BITS(35, 32)
+#define ID_AA64DFR0_EL1_TRACEBUFFER	BITS(47, 44)
+#define ID_AA64DFR0_EL1_BRBE		BITS(55, 52)
+
+#define ID_AA64ISAR0_EL1_TME		BITS(27, 24)
+
+#define ID_AA64ISAR1_EL1_APA		BITS(7, 4)
+#define ID_AA64ISAR1_EL1_API		BITS(11, 8)
+#define ID_AA64ISAR1_EL1_GPA		BITS(27, 24)
+#define ID_AA64ISAR1_EL1_GPI		BITS(31, 28)
+
+#define ID_AA64MMFR0_EL1_FGT		BITS(59, 56)
+#define ID_AA64MMFR0_EL1_ECV		BITS(63, 60)
+
+#define ID_AA64PFR1_EL1_MTE		BITS(11, 8)
+#define ID_AA64PFR0_EL1_SVE		BITS(35, 32)
 
 /*
  * Initial register values required for the boot-wrapper to run out-of-reset.

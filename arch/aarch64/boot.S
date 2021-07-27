@@ -45,104 +45,6 @@ reset_at_el3:
 	msr	sctlr_el3, x0
 	isb
 
-	mov	x0, #0x30			// RES1
-	orr	x0, x0, #(1 << 0)		// Non-secure EL1
-	orr	x0, x0, #(1 << 8)		// HVC enable
-
-	/* Enable pointer authentication if present */
-	mrs	x1, id_aa64isar1_el1
-	/* We check for APA+API and GPA+GPI */
-	ldr	x2, =((0xff << 24) | (0xff << 4))
-	and	x1, x1, x2
-	cbz	x1, 1f
-
-	orr	x0, x0, #(1 << 16)		// AP key enable
-	orr	x0, x0, #(1 << 17)		// AP insn enable
-1:
-	/* Enable TME if present */
-	mrs	x1, id_aa64isar0_el1
-	ubfx	x1, x1, #24, #4
-	cbz	x1, 1f
-
-	orr	x0, x0, #(1 << 34)		// TME enable
-1:
-	/* Enable FGT if present */
-	mrs	x1, id_aa64mmfr0_el1
-	ubfx	x1, x1, #56, #4
-	cbz	x1, 1f
-
-	orr	x0, x0, #(1 << 27)		// FGT enable
-1:
-	/* Enable ECV2 if present (allows CNTPOFF_EL2) */
-	mrs	x1, id_aa64mmfr0_el1
-	ubfx	x1, x1, #60, #4
-	cmp	x1, #2
-	b.lt	1f
-
-	orr	x0, x0, #(1 << 28)		// ECV enable
-1:
-	/* Enable MTE if present */
-	mrs	x10, id_aa64pfr1_el1
-	ubfx	x10, x10, #8, #4
-	cmp	x10, #2
-	b.lt	1f
-
-	orr	x0, x0, #(1 << 26)		// ATA enable
-1:
-#ifndef KERNEL_32
-	orr	x0, x0, #(1 << 10)		// 64-bit EL2
-#endif
-	msr	scr_el3, x0
-
-	msr	cptr_el3, xzr			// Disable copro. traps to EL3
-
-	mov	x0, xzr
-	mrs	x1, id_aa64dfr0_el1
-	ubfx	x1, x1, #32, #4
-	cbz	x1, 1f
-
-	// Enable SPE for the non-secure world.
-	orr	x0, x0, #(0x3 << 12)
-
-	// Do not trap PMSNEVFR_EL1 if present
-	cmp	x1, #3
-	b.lt	1f
-	orr	x0, x0, #(1 << 36)
-
-1:	mrs	x1, id_aa64dfr0_el1
-	ubfx	x1, x1, #44, #4
-	cbz	x1, 1f
-
-	// Enable TRBE for the non-secure world.
-	ldr	x1, =(0x3 << 24)
-	orr	x0, x0, x1
-
-1:	mrs     x1, id_aa64dfr0_el1
-	ubfx    x1, x1, #52, #4
-	cbz     x1, 1f
-
-	// Enable BRBE for the non-secure world.
-	ldr     x1, =(0x3 << 32)
-	orr     x0, x0, x1
-
-1:	msr	mdcr_el3, x0			// Disable traps to EL3
-
-	mrs	x0, id_aa64pfr0_el1
-	ubfx	x0, x0, #32, #4			// SVE present?
-	cbz	x0, 1f				// Skip SVE init if not
-
-	mrs	x0, cptr_el3
-	orr	x0, x0, #CPTR_EL3_EZ		// enable SVE
-	msr	cptr_el3, x0
-	isb
-
-	mov	x0, #ZCR_EL3_LEN_MAX		// SVE: Enable full vector len
-	msr	ZCR_EL3, x0			// for EL2.
-
-1:
-	ldr	x0, =COUNTER_FREQ
-	msr	cntfrq_el0, x0
-
 	cpuid	x0, x1
 	bl	find_logical_id
 	cmp	x0, #MPIDR_INVALID
@@ -150,6 +52,8 @@ reset_at_el3:
 	bl	setup_stack
 
 	bl	cpu_init_bootwrapper
+
+	bl	cpu_init_el3
 
 	bl	gic_secure_init
 
