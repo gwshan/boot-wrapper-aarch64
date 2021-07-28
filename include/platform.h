@@ -9,6 +9,7 @@
 #ifndef __PLATFORM_H
 #define __PLATFORM_H
 
+void print_char(char c);
 void print_string(const char *str);
 void init_uart(void);
 

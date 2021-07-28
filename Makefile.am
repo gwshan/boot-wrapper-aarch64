@@ -36,7 +36,7 @@ PSCI_CPU_OFF	:= 0x84000002
 COMMON_SRC	:= common/
 COMMON_OBJ	:= boot.o bakery_lock.o platform.o lib.o init.o
 
-ARCH_OBJ	:= boot.o stack.o utils.o
+ARCH_OBJ	:= boot.o stack.o utils.o init.o
 
 if BOOTWRAPPER_32
 CPPFLAGS	+= -DBOOTWRAPPER_32

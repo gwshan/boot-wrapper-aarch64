@@ -44,6 +44,15 @@
 #define sevl()		asm volatile ("sev" : : : "memory")
 #endif
 
+static inline unsigned long read_cpsr(void)
+{
+	unsigned long cpsr;
+	asm volatile ("mrs      %0, cpsr\n" : "=r" (cpsr));
+	return cpsr;
+}
+
+#define read_cpsr_mode()       (read_cpsr() & PSR_MODE_MASK)
+
 #define MPIDR		"p15, 0, %0, c0, c0, 5"
 #define ID_PFR1		"p15, 0, %0, c0, c1, 1"
 #define ICIALLU		"p15, 0, %0, c7, c5, 0"

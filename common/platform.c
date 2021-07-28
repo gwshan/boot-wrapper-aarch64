@@ -31,21 +31,25 @@
 #define V2M_SYS(reg)	((void *)SYSREGS_BASE + V2M_SYS_##reg)
 #endif
 
-void print_string(const char *str)
+void print_char(char c)
 {
 	uint32_t flags;
 
-	while (*str) {
-		do
-			flags = raw_readl(PL011(UARTFR));
-		while (flags & PL011_UARTFR_FIFO_FULL);
+	do {
+		flags = raw_readl(PL011(UARTFR));
+	} while (flags & PL011_UARTFR_FIFO_FULL);
 
-		raw_writel(*str++, PL011(UARTDR));
+	raw_writel(c, PL011(UARTDR));
 
-		do
-			flags = raw_readl(PL011(UARTFR));
-		while (flags & PL011_UARTFR_BUSY);
-	}
+	do {
+		flags = raw_readl(PL011(UARTFR));
+	} while (flags & PL011_UARTFR_BUSY);
+}
+
+void print_string(const char *str)
+{
+	while (*str)
+		print_char(*str++);
 }
 
 void init_uart(void)

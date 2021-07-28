@@ -11,14 +11,18 @@
 
 static void announce_bootwrapper(void)
 {
-	print_string("Boot-wrapper v0.2\r\n\r\n");
+	print_string("Boot-wrapper v0.2\r\n");
 }
+
+void announce_arch(void);
 
 void cpu_init_bootwrapper(void)
 {
 	if (this_cpu_logical_id() == 0) {
 		init_uart();
 		announce_bootwrapper();
+		announce_arch();
+		print_string("\r\n");
 		init_platform();
 	}
 }
