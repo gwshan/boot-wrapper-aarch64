@@ -21,7 +21,7 @@ ASM_FUNC(_start)
 	cpuid	r0, r1
 	bl	find_logical_id
 	cmp	r0, #MPIDR_INVALID
-	beq	_spin_dead
+	beq	err_invalid_id
 
 	bl	setup_stack
 
@@ -61,7 +61,7 @@ _monitor:
 	/* Initialise boot method */
 	b	start_el3
 
-_spin_dead:
+err_invalid_id:
 	b	.
 
 	.text
