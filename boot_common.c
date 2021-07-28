@@ -13,7 +13,6 @@ extern unsigned long entrypoint;
 extern unsigned long dtb;
 
 void init_platform(void);
-void flush_caches(void);
 
 void __noreturn jump_kernel(unsigned long address,
 			    unsigned long a0,
@@ -62,8 +61,6 @@ void __noreturn spin(unsigned long *mbox, unsigned long invalid, int is_entry)
 void __noreturn first_spin(unsigned int cpu, unsigned long *mbox,
 			   unsigned long invalid)
 {
-	flush_caches();
-
 	if (cpu == 0) {
 		init_platform();
 

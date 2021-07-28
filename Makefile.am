@@ -123,7 +123,7 @@ CFLAGS		+= -Wall -fomit-frame-pointer
 CFLAGS		+= -ffunction-sections -fdata-sections
 LDFLAGS		+= --gc-sections
 
-OFILES		+= boot_common.o bakery_lock.o platform.o $(GIC) cache.o lib.o
+OFILES		+= boot_common.o bakery_lock.o platform.o $(GIC) lib.o
 OFILES		+= $(addprefix $(ARCH_SRC),boot.o stack.o $(BOOTMETHOD) utils.o)
 
 # Don't lookup all prerequisites in $(top_srcdir), only the source files. When
