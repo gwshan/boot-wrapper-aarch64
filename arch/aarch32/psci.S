@@ -33,31 +33,10 @@ handle_smc:
 	@ Follow the SMC32 calling convention: preserve r4 - r14
 	push	{r4 - r12, lr}
 
-	ldr	r4, =PSCI_CPU_ON_32
-	cmp	r4, r0
-	ldr	r4, =psci_cpu_on
-	beq	do_psci_call
-
-	ldr	r4, =PSCI_CPU_OFF
-	cmp	r4, r0
-	ldr	r4, =psci_cpu_off
-	beq	do_psci_call
-
-	adr	r4, psci_invalid
-
-do_psci_call:
-	mov	r0, r1
-	mov	r1, r2
-	mov	r2, r3
-
-	blx	r4
+	blx	psci_call
 
 	pop	{r4 - r12, lr}
 	movs	pc, lr
-
-psci_invalid:
-	mov	r0, #PSCI_RET_NOT_SUPPORTED
-	bx	lr
 
 ENTRY(start_el3)
 	ldr	r0, =smc_vectors

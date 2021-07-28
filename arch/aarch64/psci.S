@@ -51,13 +51,6 @@ vector:
 err_exception:
 	b err_exception
 
-	.macro branch_if val, addr
-	ldr	x7, =\val
-	cmp	x0, x7
-	adr	x7, \addr
-	b.eq	do_call
-	.endm
-
 smc_entry32:
 	/* Clear upper bits */
 	mov	w0, w0
@@ -74,21 +67,9 @@ smc_entry64:
 	// Keep sp aligned to 16 bytes
 	stp	x30, xzr, [sp, #-16]!
 
-	/* If function ID matches, do_call with procedure address in x7 */
-	branch_if PSCI_CPU_ON_32,	psci_cpu_on
-	branch_if PSCI_CPU_ON_64,	psci_cpu_on
-	branch_if PSCI_CPU_OFF,		psci_cpu_off
+	bl	psci_call
 
-	/* Otherwise, return error in x0/w0 */
-	mov	x0, PSCI_RET_NOT_SUPPORTED
 	b	smc_exit
-
-do_call:
-	mov	x0, x1
-	mov	x1, x2
-	mov	x2, x3
-
-	blr	x7
 
 smc_exit:
 	ldp	x30, xzr, [sp], #16

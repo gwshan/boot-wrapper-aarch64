@@ -31,7 +31,7 @@ static int psci_store_address(unsigned int cpu, unsigned long address)
 	return PSCI_RET_SUCCESS;
 }
 
-int psci_cpu_on(unsigned long target_mpidr, unsigned long address)
+static int psci_cpu_on(unsigned long target_mpidr, unsigned long address)
 {
 	int ret;
 	unsigned int cpu = find_logical_id(target_mpidr);
@@ -47,7 +47,7 @@ int psci_cpu_on(unsigned long target_mpidr, unsigned long address)
 	return ret;
 }
 
-int psci_cpu_off(void)
+static int psci_cpu_off(void)
 {
 	unsigned long mpidr = read_mpidr();
 	unsigned int cpu = find_logical_id(mpidr);
@@ -60,6 +60,23 @@ int psci_cpu_off(void)
 	spin(branch_table + cpu, PSCI_ADDR_INVALID, 0);
 
 	unreachable();
+}
+
+long psci_call(unsigned long fid, unsigned long arg1, unsigned long arg2)
+{
+	switch (fid) {
+	case PSCI_CPU_OFF:
+		return psci_cpu_off();
+#ifdef KERNEL_32
+	case PSCI_CPU_ON_32:
+		return psci_cpu_on(arg1, arg2);
+#else
+	case PSCI_CPU_ON_64:
+		return psci_cpu_on(arg1, arg2);
+#endif
+	default:
+		return PSCI_RET_NOT_SUPPORTED;
+	}
 }
 
 void __noreturn psci_first_spin(unsigned int cpu)
