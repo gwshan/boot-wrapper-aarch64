@@ -10,9 +10,9 @@
 #include <stdint.h>
 
 #include <bakery_lock.h>
+#include <boot.h>
 #include <cpu.h>
 #include <psci.h>
-#include <spin.h>
 
 #ifndef CPU_IDS
 #error "No MPIDRs provided"

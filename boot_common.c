@@ -6,8 +6,8 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE.txt file.
  */
+#include <boot.h>
 #include <cpu.h>
-#include <spin.h>
 
 extern unsigned long entrypoint;
 extern unsigned long dtb;
