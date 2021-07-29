@@ -38,12 +38,12 @@ handle_smc:
 	pop	{r4 - r12, lr}
 	movs	pc, lr
 
-ENTRY(start_el3)
+ASM_FUNC(start_el3)
 	ldr	r0, =smc_vectors
 	blx	setup_vector
 	/* pass through */
 
-ENTRY(start_no_el3)
+ASM_FUNC(start_no_el3)
 	/*
 	 * For no-el3, we assume that firmware launched the boot-wrapper in
 	 * non-secure EL2 or EL1. We assume it has its own PSCI implementation

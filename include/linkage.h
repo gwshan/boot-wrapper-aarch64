@@ -13,9 +13,13 @@
 
 #ifdef __ASSEMBLY__
 
-#define ENTRY(name)				\
+#define ASM_FUNC(name)				\
 	.globl name;				\
 	.type  name, %function;			\
+	name:
+
+#define ASM_DATA(name)				\
+	.globl name;				\
 	name:
 
 #endif /* __ASSEMBLY__ */

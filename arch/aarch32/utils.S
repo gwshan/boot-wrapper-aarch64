@@ -18,7 +18,7 @@
  * Returns MPIDR_INVALID for unknown MPIDRs
  * Clobbers r1, r2, r3.
  */
-ENTRY(find_logical_id)
+ASM_FUNC(find_logical_id)
 	ldr	r2, =id_table
 	mov	r1, #0
 1:	mov	r3, #NR_CPUS
@@ -40,7 +40,7 @@ ENTRY(find_logical_id)
  * Setup EL3 vectors.
  * r0: vector address
  */
-ENTRY(setup_vector)
+ASM_FUNC(setup_vector)
 	mcr	p15, 0, r0, c12, c0, 1	@ MVBAR
 	isb
 	bx	lr

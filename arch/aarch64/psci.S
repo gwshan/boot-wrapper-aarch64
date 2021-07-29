@@ -6,6 +6,7 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE.txt file.
  */
+#include <linkage.h>
 #include <psci.h>
 
 #include "common.S"
@@ -45,9 +46,6 @@ vector:
 
 	.text
 
-	.globl start_no_el3
-	.globl start_el3
-
 err_exception:
 	b err_exception
 
@@ -81,8 +79,7 @@ smc_exit:
 	ldp	x18, x19, [sp], #16
 	eret
 
-
-start_el3:
+ASM_FUNC(start_el3)
 	ldr	x0, =vector
 	bl	setup_vector
 
@@ -95,7 +92,7 @@ start_el3:
  * This PSCI implementation requires EL3. Without EL3 we'll only boot the
  * primary cpu, all others will be trapped in an infinite loop.
  */
-start_no_el3:
+ASM_FUNC(start_no_el3)
 	cpuid	x0, x1
 	bl	find_logical_id
 	cbz	x0, psci_first_spin

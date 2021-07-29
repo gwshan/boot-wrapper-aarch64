@@ -16,7 +16,7 @@
 	.arch_extension virt
 
 	.section .init
-ENTRY(_start)
+ASM_FUNC(_start)
 	/* Stack initialisation */
 	cpuid	r0, r1
 	bl	find_logical_id
@@ -70,7 +70,7 @@ _spin_dead:
 	 * r0: kernel address
 	 * r1-r3, sp[0]: kernel arguments
 	 */
-ENTRY(jump_kernel)
+ASM_FUNC(jump_kernel)
 	sub	sp, #4				@ Ignore fourth argument
 	push	{r0 - r3}
 	mov	r5, sp

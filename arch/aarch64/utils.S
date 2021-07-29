@@ -6,11 +6,8 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE.txt file.
  */
-
 #include <cpu.h>
-
-	.globl find_logical_id
-	.globl setup_vector
+#include <linkage.h>
 
 	.text
 
@@ -20,7 +17,7 @@
  * Sets the Z flag when CPU is primary
  * Clobbers x1, x2, x3
  */
-find_logical_id:
+ASM_FUNC(find_logical_id)
 	ldr	x2, =id_table
 	mov	x1, xzr
 1:	mov	x3, #NR_CPUS	// check we haven't walked off the end of the array
@@ -40,7 +37,7 @@ find_logical_id:
  * Setup EL3 vectors
  * x0: vector address
  */
-setup_vector:
+ASM_FUNC(setup_vector)
 	msr	VBAR_EL3, x0
 	isb
 	ret

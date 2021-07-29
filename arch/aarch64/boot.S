@@ -6,15 +6,13 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE.txt file.
  */
+#include <linkage.h>
 
 #include "common.S"
 
 	.section .init
 
-	.globl	_start
-	.globl jump_kernel
-
-_start:
+ASM_FUNC(_start)
 	cpuid	x0, x1
 	bl	find_logical_id
 	cmp	x0, #MPIDR_INVALID
@@ -123,7 +121,7 @@ err_invalid_id:
 	 * x0:		entry address
 	 * x1-x4:	arguments
 	 */
-jump_kernel:
+ASM_FUNC(jump_kernel)
 	mov	x19, x0
 	mov	x20, x1
 	mov	x21, x2

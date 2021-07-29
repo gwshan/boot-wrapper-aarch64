@@ -6,16 +6,14 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE.txt file.
  */
+#include <linkage.h>
 
 #include "common.S"
 
 	.text
 
-	.globl start_no_el3
-	.globl start_el3
-
-start_el3:
-start_no_el3:
+ASM_FUNC(start_el3)
+ASM_FUNC(start_no_el3)
 	cpuid	x0, x1
 	bl	find_logical_id
 
