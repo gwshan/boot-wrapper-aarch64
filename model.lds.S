@@ -65,7 +65,8 @@ SECTIONS
 
 	.boot PHYS_OFFSET: {
 		*(.init)
-		*(.text* .data* .rodata* .bss* COMMON)
+		*(.text*)
+		*(.data* .rodata* .bss* COMMON)
 		*(.vectors)
 		*(.stack)
 		PROVIDE(etext = .);
