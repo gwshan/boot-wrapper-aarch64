@@ -30,8 +30,8 @@ start_no_el3:
 	mov	x2, #0
 	bl	first_spin
 
-kernel_address:
 	.align 3
+kernel_address:
 	.long 0
 
 	.ltorg
