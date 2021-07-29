@@ -12,6 +12,9 @@
 
 	.text
 
+ASM_FUNC(cpu_init_bootmethod)
+	ret
+
 ASM_FUNC(start_el3)
 ASM_FUNC(start_no_el3)
 	cpuid	x0, x1

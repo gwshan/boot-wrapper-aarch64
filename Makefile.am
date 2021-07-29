@@ -48,6 +48,7 @@ ARCH_SRC	:= arch/aarch64/
 endif
 
 if PSCI
+DEFINES		+= -DPSCI
 ARCH_OBJ	+= psci.o
 COMMON_OBJ	+= psci.o
 PSCI_NODE	:= psci {				\

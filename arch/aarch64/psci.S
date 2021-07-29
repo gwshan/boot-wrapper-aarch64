@@ -19,7 +19,7 @@
 	.section .vectors, "w"
 
 	.align 11
-vector:
+ASM_DATA(psci_vectors)
 	// current EL, SP_EL0
 	ventry	err_exception	// synchronous
 	ventry	err_exception	// IRQ
@@ -80,22 +80,5 @@ smc_exit:
 	eret
 
 ASM_FUNC(start_el3)
-	ldr	x0, =vector
-	bl	setup_vector
-
-	/* only boot the primary cpu (entry 0 in the table) */
-	cpuid	x0, x1
-	bl	find_logical_id
-	b	psci_first_spin
-
-/*
- * This PSCI implementation requires EL3. Without EL3 we'll only boot the
- * primary cpu, all others will be trapped in an infinite loop.
- */
 ASM_FUNC(start_no_el3)
-	cpuid	x0, x1
-	bl	find_logical_id
-	cbz	x0, psci_first_spin
-spin_dead:
-	wfe
-	b	spin_dead
+	b	psci_first_spin

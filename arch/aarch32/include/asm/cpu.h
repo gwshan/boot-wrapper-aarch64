@@ -63,6 +63,7 @@ static inline unsigned long read_cpsr(void)
 #define SCR		"p15, 0, %0, c1, c1, 0"
 #define NSACR		"p15, 0, %0, c1, c1, 2"
 #define ICIALLU		"p15, 0, %0, c7, c5, 0"
+#define MVBAR		"p15, 0, %0, c12, c0, 1"
 
 #define ICC_SRE		"p15, 6, %0, c12, c12, 5"
 #define ICC_CTLR	"p15, 6, %0, c12, c12, 4"

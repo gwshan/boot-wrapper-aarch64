@@ -8,6 +8,7 @@
  */
 #include <cpu.h>
 #include <platform.h>
+#include <stdbool.h>
 
 static const char *mode_string(void)
 {
@@ -39,3 +40,18 @@ void cpu_init_secure_pl1(void)
 
 	mcr(CNTFRQ, COUNTER_FREQ);
 }
+
+#ifdef PSCI
+extern char psci_vectors[];
+
+bool cpu_init_psci_arch(void)
+{
+	if (read_cpsr_mode() != PSR_MON)
+		return false;
+
+	mcr(MVBAR, (unsigned long)psci_vectors);
+	isb();
+
+	return true;
+}
+#endif

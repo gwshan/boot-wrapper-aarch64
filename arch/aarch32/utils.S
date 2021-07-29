@@ -35,12 +35,3 @@ ASM_FUNC(find_logical_id)
 	bx	lr
 3:	mov	r0, #MPIDR_INVALID
 	bx	lr
-
-/*
- * Setup EL3 vectors.
- * r0: vector address
- */
-ASM_FUNC(setup_vector)
-	mcr	p15, 0, r0, c12, c0, 1	@ MVBAR
-	isb
-	bx	lr

@@ -15,7 +15,7 @@
 
 	.section .vectors
 	.align 6
-smc_vectors:
+ASM_DATA(psci_vectors)
 	b	err_exception			@ Reset
 	b	err_exception			@ Undef
 	b	handle_smc			@ SMC
@@ -39,11 +39,5 @@ handle_smc:
 	movs	pc, lr
 
 ASM_FUNC(start_el3)
-	ldr	r0, =smc_vectors
-	blx	setup_vector
-	/* pass through */
-
 ASM_FUNC(start_no_el3)
-	cpuid	r0, r1
-	blx	find_logical_id
 	b	psci_first_spin

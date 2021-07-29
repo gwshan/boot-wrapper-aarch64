@@ -6,6 +6,7 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE.txt file.
  */
+#include <boot.h>
 #include <cpu.h>
 #include <platform.h>
 
@@ -44,7 +45,9 @@ void announce_arch(void);
 
 void cpu_init_bootwrapper(void)
 {
-	if (this_cpu_logical_id() == 0) {
+	unsigned int cpu = this_cpu_logical_id();
+
+	if (cpu == 0) {
 		init_uart();
 		announce_bootwrapper();
 		announce_arch();
@@ -52,4 +55,6 @@ void cpu_init_bootwrapper(void)
 		print_string("\r\n");
 		init_platform();
 	}
+
+	cpu_init_bootmethod(cpu);
 }

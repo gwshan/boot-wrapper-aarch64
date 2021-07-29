@@ -89,3 +89,18 @@ void cpu_init_el3(void)
 
 	msr(CNTFRQ_EL0, COUNTER_FREQ);
 }
+
+#ifdef PSCI
+extern char psci_vectors[];
+
+bool cpu_init_psci_arch(void)
+{
+	if (mrs(CurrentEL) != CURRENTEL_EL3)
+		return false;
+
+	msr(VBAR_EL3, (unsigned long)psci_vectors);
+	isb();
+
+	return true;
+}
+#endif

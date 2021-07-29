@@ -32,12 +32,3 @@ ASM_FUNC(find_logical_id)
 	ret
 3:	mov	x0, #MPIDR_INVALID
 	ret
-
-/*
- * Setup EL3 vectors
- * x0: vector address
- */
-ASM_FUNC(setup_vector)
-	msr	VBAR_EL3, x0
-	isb
-	ret

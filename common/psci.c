@@ -12,6 +12,7 @@
 #include <bakery_lock.h>
 #include <boot.h>
 #include <cpu.h>
+#include <platform.h>
 #include <psci.h>
 
 #ifndef CPU_IDS
@@ -78,12 +79,25 @@ long psci_call(unsigned long fid, unsigned long arg1, unsigned long arg2)
 	}
 }
 
-void __noreturn psci_first_spin(unsigned int cpu)
+void __noreturn psci_first_spin(void)
 {
-	if (cpu == MPIDR_INVALID)
-		while (1);
+	unsigned int cpu = this_cpu_logical_id();
 
 	first_spin(cpu, branch_table + cpu, PSCI_ADDR_INVALID);
 
 	unreachable();
+}
+
+void cpu_init_bootmethod(unsigned int cpu)
+{
+	if (cpu_init_psci_arch())
+		return;
+
+	if (cpu == 0) {
+		print_string("WARNING: PSCI could not be initialized. Boot may fail\r\n\r\n");
+		return;
+	}
+
+	while (1)
+		wfe();
 }
