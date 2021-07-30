@@ -15,13 +15,6 @@
 #define ICC_CTLR_EL3	"S3_6_C12_C12_4"
 #define ICC_PMR_EL1	"S3_0_C4_C6_0"
 
-static inline uint32_t gic_read_icc_sre(void)
-{
-	uint32_t val;
-	asm volatile ("mrs %0, " ICC_SRE_EL3 : "=r" (val));
-	return val;
-}
-
 static inline void gic_write_icc_sre(uint32_t val)
 {
 	asm volatile ("msr " ICC_SRE_EL3 ", %0" : : "r" (val));

@@ -42,6 +42,8 @@
 #define GICR_TYPER_Last			(1 << 4)
 
 #define ICC_SRE_SRE			(1 << 0)
+#define ICC_SRE_DFB			(1 << 1)
+#define ICC_SRE_DIB			(1 << 2)
 #define ICC_SRE_Enable			(1 << 3)
 
 void gic_secure_init_primary(void)
@@ -101,8 +103,6 @@ void gic_secure_init_primary(void)
 
 void gic_secure_init(void)
 {
-	uint32_t sre;
-
 	/*
 	 * If GICv3 is not available, skip initialisation. The OS will probably
 	 * fail with a warning, but this should be easier to debug than a
@@ -114,9 +114,7 @@ void gic_secure_init(void)
 	if (this_cpu_logical_id() == 0)
 		gic_secure_init_primary();
 
-	sre = gic_read_icc_sre();
-	sre |= ICC_SRE_Enable | ICC_SRE_SRE;
-	gic_write_icc_sre(sre);
+	gic_write_icc_sre(ICC_SRE_Enable | ICC_SRE_DIB | ICC_SRE_DFB | ICC_SRE_SRE);
 	isb();
 
 	gic_write_icc_ctlr(0);

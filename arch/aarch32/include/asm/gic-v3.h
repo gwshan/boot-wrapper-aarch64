@@ -9,13 +9,6 @@
 #ifndef __ASM_AARCH32_GICV3_H
 #define __ASM_AARCH32_GICV3_H
 
-static inline uint32_t gic_read_icc_sre(void)
-{
-	uint32_t val;
-	asm volatile ("mrc p15, 6, %0, c12, c12, 5" : "=r" (val));
-	return val;
-}
-
 static inline void gic_write_icc_sre(uint32_t val)
 {
 	asm volatile ("mcr p15, 6, %0, c12, c12, 5" : : "r" (val));
