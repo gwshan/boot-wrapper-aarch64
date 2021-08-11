@@ -59,6 +59,14 @@ ASM_FUNC(_start)
 
 	orr	x0, x0, #(1 << 27)		// FGT enable
 1:
+	/* Enable ECV2 if present (allows CNTPOFF_EL2) */
+	mrs	x1, id_aa64mmfr0_el1
+	ubfx	x1, x1, #60, #4
+	cmp	x1, #2
+	b.lt	1f
+
+	orr	x0, x0, #(1 << 28)		// ECV enable
+1:
 	/* Enable MTE if present */
 	mrs	x10, id_aa64pfr1_el1
 	ubfx	x10, x10, #8, #4
