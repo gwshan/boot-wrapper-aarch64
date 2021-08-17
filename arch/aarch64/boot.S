@@ -88,8 +88,12 @@ ASM_FUNC(_start)
 	cbz	x1, 1f
 
 	// Enable SPE for the non-secure world.
-	ldr	x1, =(0x3 << 12)
-	orr	x0, x0, x1
+	orr	x0, x0, #(0x3 << 12)
+
+	// Do not trap PMSNEVFR_EL1 if present
+	cmp	x1, #3
+	b.lt	1f
+	orr	x0, x0, #(1 << 36)
 
 1:	mrs	x1, id_aa64dfr0_el1
 	ubfx	x1, x1, #44, #4
