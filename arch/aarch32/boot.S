@@ -37,9 +37,10 @@ ASM_FUNC(_start)
 	b	start_no_el3
 
 _switch_monitor:
-	ldr	r0, =boot_vectors
-	bl	setup_vector
-	smc	#0
+	adr	lr, _monitor
+	ldr	r0, =(PSR_A | PSR_I | PSR_F | PSR_MON)
+	msr	spsr, r0
+	movs	pc, lr
 
 _monitor:
 	/* Move the stack to Monitor mode*/
@@ -101,18 +102,6 @@ ASM_FUNC(jump_kernel)
 
 	msr	spsr_cxf, r4
 	movs	pc, lr
-
-	.section .vectors
-	.align 6
-boot_vectors:
-	b	.
-	b	.
-	b	_monitor
-	b	.
-	b	.
-	b	.
-	b	.
-	b	.
 
 	.section .data
 	.align 2
