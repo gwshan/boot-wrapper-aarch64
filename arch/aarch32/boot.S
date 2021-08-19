@@ -16,6 +16,20 @@
 	.arch_extension virt
 
 	.section .init
+
+	/*
+	 * The boot-wrapper must be entered from the reset vector at the
+	 * highest implemented exception level. The boot-wrapper only supports
+	 * being entered in the following modes:
+	 *
+	 * - PL1 / EL3 (Secure) Supervisor mode
+	 *   Entering in this mode is strongly recommended.
+	 *   PL2 must be implemented.
+	 *
+	 * - PL2 / EL2 (Non-secure) Hypervisor mode
+	 *   Entering in this mode is partially supported.
+	 *   PSCI is not supported when entered in this mode.
+	 */
 ASM_FUNC(_start)
 	/* Stack initialisation */
 	cpuid	r0, r1

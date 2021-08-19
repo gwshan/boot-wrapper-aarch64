@@ -44,11 +44,6 @@ ASM_FUNC(start_el3)
 	/* pass through */
 
 ASM_FUNC(start_no_el3)
-	/*
-	 * For no-el3, we assume that firmware launched the boot-wrapper in
-	 * non-secure EL2 or EL1. We assume it has its own PSCI implementation
-	 * sitting at EL3, and that this path is only taken by primary CPU.
-	 */
 	cpuid	r0, r1
 	blx	find_logical_id
 	b	psci_first_spin

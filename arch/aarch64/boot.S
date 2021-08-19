@@ -12,6 +12,19 @@
 
 	.section .init
 
+	/*
+	 * The boot-wrapper must be entered from the reset vector at the
+	 * highest implemented exception level. The boot-wrapper only supports
+	 * being entered at the following exception levels:
+	 *
+	 * - EL3 (Secure)
+	 *   Entering at EL3 is strongly recommended.
+	 *   EL2 must be implemented.
+	 *
+	 * - EL2 (Non-secure)
+	 *   Entering at EL2 is partially supported.
+	 *   PSCI is not supported when entered in this exception level.
+	 */
 ASM_FUNC(_start)
 	cpuid	x0, x1
 	bl	find_logical_id
