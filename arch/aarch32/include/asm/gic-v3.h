@@ -9,14 +9,16 @@
 #ifndef __ASM_AARCH32_GICV3_H
 #define __ASM_AARCH32_GICV3_H
 
+#include <asm/cpu.h>
+
 static inline void gic_write_icc_sre(uint32_t val)
 {
-	asm volatile ("mcr p15, 6, %0, c12, c12, 5" : : "r" (val));
+	mcr(ICC_SRE, val);
 }
 
 static inline void gic_write_icc_ctlr(uint32_t val)
 {
-	asm volatile ("mcr p15, 6, %0, c12, c12, 4" : : "r" (val));
+	mcr(ICC_CTLR, val);
 }
 
 #endif
