@@ -56,32 +56,6 @@ static inline uint32_t read_id_pfr1(void)
 	return val;
 }
 
-static inline uint32_t read_clidr(void)
-{
-	uint32_t val;
-
-	asm volatile ("mrc	p15, 1, %0, c0, c0, 1" : "=r" (val));
-	return val;
-}
-
-static inline uint32_t read_ccsidr(void)
-{
-	uint32_t val;
-
-	asm volatile ("mrc	p15, 1, %0, c0, c0, 0" : "=r" (val));
-	return val;
-}
-
-static inline void write_csselr(uint32_t val)
-{
-	asm volatile ("mcr	p15, 2, %0, c0, c0, 0" : : "r" (val));
-}
-
-static inline void dccisw(uint32_t val)
-{
-	asm volatile ("mcr	p15, 0, %0, c7, c14, 2" : : "r" (val));
-}
-
 static inline void iciallu(void)
 {
 	uint32_t val = 0;
