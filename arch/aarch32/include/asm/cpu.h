@@ -30,6 +30,11 @@
 #define PSR_I			(1 << 7)
 #define PSR_A			(1 << 8)
 
+#define SCR_NS			BIT(0)
+#define SCR_HCE			BIT(8)
+
+#define NSACR_CP10		BIT(10)
+#define NSACR_CP11		BIT(11)
 
 #define SPSR_KERNEL		(PSR_A | PSR_I | PSR_F | PSR_HYP)
 
@@ -55,10 +60,14 @@ static inline unsigned long read_cpsr(void)
 
 #define MPIDR		"p15, 0, %0, c0, c0, 5"
 #define ID_PFR1		"p15, 0, %0, c0, c1, 1"
+#define SCR		"p15, 0, %0, c1, c1, 0"
+#define NSACR		"p15, 0, %0, c1, c1, 2"
 #define ICIALLU		"p15, 0, %0, c7, c5, 0"
 
 #define ICC_SRE		"p15, 6, %0, c12, c12, 5"
 #define ICC_CTLR	"p15, 6, %0, c12, c12, 4"
+
+#define CNTFRQ		"p15, 0, %0, c14, c0, 0"
 
 #define mrc(reg)						\
 ({								\

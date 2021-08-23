@@ -27,3 +27,15 @@ void announce_arch(void)
 	print_string(mode_string());
 	print_string("\r\n");
 }
+
+void cpu_init_secure_pl1(void)
+{
+	unsigned long scr = SCR_NS | SCR_HCE;
+	unsigned long nsacr = NSACR_CP10 | NSACR_CP11;
+
+	mcr(SCR, scr);
+
+	mcr(NSACR, nsacr);
+
+	mcr(CNTFRQ, COUNTER_FREQ);
+}

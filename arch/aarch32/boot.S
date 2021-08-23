@@ -63,16 +63,7 @@ _monitor:
 	/* Move the stack to Monitor mode*/
 	mrs	sp, sp_svc
 
-	/* Setup secure registers and devices */
-	mov	r0, #1				@ Non-secure lower level
-	orr	r0, #(1 << 8)			@ HVC enable
-	mcr	p15, 0, r0, c1, c1, 0		@ SCR
-
-	mov	r0, #(1 << 10 | 1 << 11)	@ Enable NS access to CPACR
-	mcr	p15, 0, r0, c1, c1, 2		@ NSACR
-
-	ldr	r0, =COUNTER_FREQ
-	mcr	p15, 0, r0, c14, c0, 0		@ CNTFRQ
+	bl	cpu_init_secure_pl1
 
 	bl	cpu_init_bootwrapper
 
