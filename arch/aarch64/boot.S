@@ -118,7 +118,7 @@ ASM_FUNC(_start)
 	msr	ZCR_EL3, x0			// for EL2.
 
 1:
-	ldr	x0, =CNTFRQ
+	ldr	x0, =COUNTER_FREQ
 	msr	cntfrq_el0, x0
 
 	bl	gic_secure_init

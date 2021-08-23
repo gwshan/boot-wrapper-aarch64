@@ -13,12 +13,12 @@ SCRIPT_DIR	:= $(top_srcdir)/scripts
 PHYS_OFFSET	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findmem.pl $(KERNEL_DTB))
 UART_BASE	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
 SYSREGS_BASE	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findbase.pl $(KERNEL_DTB) 0 'arm,vexpress-sysreg' 2> /dev/null)
-CNTFRQ		:= 24000000
+COUNTER_FREQ	:= 24000000
 
 CPU_IDS		:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findcpuids.pl $(KERNEL_DTB))
 NR_CPUS         := $(shell echo $(CPU_IDS) | tr ',' ' ' | wc -w)
 
-DEFINES		= -DCNTFRQ=$(CNTFRQ)
+DEFINES		= -DCOUNTER_FREQ=$(COUNTER_FREQ)
 DEFINES		+= -DCPU_IDS=$(CPU_IDS)
 DEFINES		+= -DNR_CPUS=$(NR_CPUS)
 DEFINES		+= $(if $(SYSREGS_BASE), -DSYSREGS_BASE=$(SYSREGS_BASE), )

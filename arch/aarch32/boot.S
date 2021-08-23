@@ -54,7 +54,7 @@ _monitor:
 	mov	r0, #(1 << 10 | 1 << 11)	@ Enable NS access to CPACR
 	mcr	p15, 0, r0, c1, c1, 2		@ NSACR
 
-	ldr	r0, =CNTFRQ
+	ldr	r0, =COUNTER_FREQ
 	mcr	p15, 0, r0, c14, c0, 0		@ CNTFRQ
 
 	bl	gic_secure_init
