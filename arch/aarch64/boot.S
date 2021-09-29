@@ -57,7 +57,7 @@ reset_at_el3:
 
 	bl	gic_secure_init
 
-	b	start_el3
+	b	start_bootmethod
 
 	/*
 	 * EL2 initialization
@@ -97,7 +97,7 @@ reset_no_el3:
 
 	bl	cpu_init_bootwrapper
 
-	b	start_no_el3
+	b	start_bootmethod
 
 err_invalid_id:
 	b	.

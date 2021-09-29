@@ -15,8 +15,7 @@
 ASM_FUNC(cpu_init_bootmethod)
 	ret
 
-ASM_FUNC(start_el3)
-ASM_FUNC(start_no_el3)
+ASM_FUNC(start_bootmethod)
 	cpuid	x0, x1
 	bl	find_logical_id
 

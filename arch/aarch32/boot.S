@@ -51,7 +51,7 @@ ASM_FUNC(_start)
 
 	bl	cpu_init_bootwrapper
 
-	b	start_no_el3
+	b	start_bootmethod
 
 _switch_monitor:
 	adr	lr, _monitor
@@ -69,8 +69,7 @@ _monitor:
 
 	bl	gic_secure_init
 
-	/* Initialise boot method */
-	b	start_el3
+	b	start_bootmethod
 
 err_invalid_id:
 	b	.

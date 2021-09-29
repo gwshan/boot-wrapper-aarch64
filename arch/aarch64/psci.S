@@ -79,6 +79,5 @@ smc_exit:
 	ldp	x18, x19, [sp], #16
 	eret
 
-ASM_FUNC(start_el3)
-ASM_FUNC(start_no_el3)
+ASM_FUNC(start_bootmethod)
 	b	psci_first_spin

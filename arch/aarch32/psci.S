@@ -38,6 +38,5 @@ handle_smc:
 	pop	{r4 - r12, lr}
 	movs	pc, lr
 
-ASM_FUNC(start_el3)
-ASM_FUNC(start_no_el3)
+ASM_FUNC(start_bootmethod)
 	b	psci_first_spin
