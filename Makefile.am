@@ -126,6 +126,7 @@ CPPFLAGS	+= $(INITRD_FLAGS)
 CFLAGS		+= -I$(top_srcdir)/include/ -I$(top_srcdir)/$(ARCH_SRC)/include/
 CFLAGS		+= -Wall -fomit-frame-pointer
 CFLAGS		+= -ffunction-sections -fdata-sections
+CFLAGS		+= -fno-pic -fno-pie
 LDFLAGS		+= --gc-sections
 
 OBJ		:= $(addprefix $(ARCH_SRC),$(ARCH_OBJ)) $(addprefix $(COMMON_SRC),$(COMMON_OBJ))
