@@ -38,7 +38,8 @@ ASM_FUNC(_start)
 
 	/* Enable pointer authentication if present */
 	mrs	x1, id_aa64isar1_el1
-	ldr	x2, =(((0xff) << 24) | (0xff << 4))
+	/* We check for APA+API and GPA+GPI */
+	ldr	x2, =((0xff << 24) | (0xff << 4))
 	and	x1, x1, x2
 	cbz	x1, 1f
 
