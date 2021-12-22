@@ -82,8 +82,8 @@ AS_IF([test "x$X_IMAGE" != "x"],
 
 # Allow a user to pass --enable-psci
 AC_ARG_ENABLE([psci],
-	AS_HELP_STRING([--enable-psci], [enable the psci boot method]),
-	[USE_PSCI=$enableval])
+	AS_HELP_STRING([--disable-psci], [disable the psci boot method]),
+	[USE_PSCI=$enableval], [USE_PSCI="yes"])
 AM_CONDITIONAL([PSCI], [test "x$USE_PSCI" = "xyes"])
 AS_IF([test "x$USE_PSCI" = "xyes"], [], [USE_PSCI=no])
 
