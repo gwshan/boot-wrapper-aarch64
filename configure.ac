@@ -33,7 +33,7 @@ AC_ARG_WITH([kernel-dir],
 AS_IF([test "x$KERNEL_ES" = x32],
 	[KERN_IMAGE=$KERN_DIR/arch/arm/boot/zImage],
 	[KERN_IMAGE=$KERN_DIR/arch/arm64/boot/Image])
-KERN_DTB=$KERN_DIR/arch/arm64/boot/dts/rtsm_ve-aemv8a.dtb
+KERN_DTB=$KERN_DIR/arch/arm64/boot/dts/arm/fvp-base-revc.dtb
 
 # Allow the user to override the default DTB
 AC_ARG_WITH([dtb],
