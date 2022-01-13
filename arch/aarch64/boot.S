@@ -104,6 +104,14 @@ ASM_FUNC(_start)
 	ldr	x1, =(0x3 << 24)
 	orr	x0, x0, x1
 
+1:	mrs     x1, id_aa64dfr0_el1
+	ubfx    x1, x1, #52, #4
+	cbz     x1, 1f
+
+	// Enable BRBE for the non-secure world.
+	ldr     x1, =(0x3 << 32)
+	orr     x0, x0, x1
+
 1:	msr	mdcr_el3, x0			// Disable traps to EL3
 
 	mrs	x0, id_aa64pfr0_el1
