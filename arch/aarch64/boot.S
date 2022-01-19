@@ -123,7 +123,7 @@ ASM_FUNC(_start)
 	msr	cptr_el3, x0
 	isb
 
-	mov	x0, #ZCR_EL3_LEN_MASK		// SVE: Enable full vector len
+	mov	x0, #ZCR_EL3_LEN_MAX		// SVE: Enable full vector len
 	msr	ZCR_EL3, x0			// for EL2.
 
 1:

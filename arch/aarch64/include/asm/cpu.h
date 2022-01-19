@@ -30,7 +30,7 @@
 #define CPTR_EL3_EZ		(1 << 8)
 
 #define ZCR_EL3			s3_6_c1_c2_0
-#define ZCR_EL3_LEN_MASK	0x1ff
+#define ZCR_EL3_LEN_MAX		0xf
 
 #define SCTLR_EL1_CP15BEN	(1 << 5)
 #define SCTLR_EL1_RES1		(3 << 28 | 3 << 22 | 1 << 11)
