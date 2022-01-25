@@ -36,8 +36,15 @@
 #define SCTLR_EL1_RES1		(3 << 28 | 3 << 22 | 1 << 11)
 
 #ifdef KERNEL_32
-/* 32-bit kernel decompressor uses CP15 barriers */
-#define SCTLR_EL1_KERNEL	(SCTLR_EL1_RES1 | SCTLR_EL1_CP15BEN)
+/*
+ * When booting a 32-bit kernel, EL1 uses AArch32 and registers which are
+ * architecturally mapped must be configured with the AArch32 layout.
+ *
+ * We copy the AArch32 definition of SCTLR_KERNEL here.
+ *
+ * TODO: restructure the headers to share a single definition.
+ */
+#define SCTLR_EL1_KERNEL	(3 << 22 | 1 << 11 | 1 << 5 | 3 << 4)
 #define SPSR_KERNEL		(SPSR_A | SPSR_I | SPSR_F | SPSR_HYP)
 #else
 #define SCTLR_EL1_KERNEL	SCTLR_EL1_RES1
