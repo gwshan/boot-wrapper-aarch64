@@ -63,6 +63,9 @@
 #define ID_AA64ISAR1_EL1_GPA		BITS(27, 24)
 #define ID_AA64ISAR1_EL1_GPI		BITS(31, 28)
 
+#define ID_AA64ISAR2_EL1_GPA3		BITS(11, 8)
+#define ID_AA64ISAR2_EL1_APA3		BITS(15, 12)
+
 #define ID_AA64MMFR0_EL1_FGT		BITS(59, 56)
 #define ID_AA64MMFR0_EL1_ECV		BITS(63, 60)
 
@@ -103,6 +106,8 @@
 
 #define ZCR_EL3			s3_6_c1_c2_0
 #define ZCR_EL3_LEN_MAX		0xf
+
+#define ID_AA64ISAR2_EL1	s3_0_c0_c6_2
 
 #define SCTLR_EL1_CP15BEN	(1 << 5)
 

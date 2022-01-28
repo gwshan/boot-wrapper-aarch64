@@ -30,12 +30,16 @@ static inline bool kernel_is_32bit(void)
 
 static inline bool cpu_has_pauth(void)
 {
-	const unsigned long id_pauth = ID_AA64ISAR1_EL1_APA |
-				       ID_AA64ISAR1_EL1_API |
-				       ID_AA64ISAR1_EL1_GPA |
-				       ID_AA64ISAR1_EL1_GPI;
+	const unsigned long isar1_pauth = ID_AA64ISAR1_EL1_APA |
+					  ID_AA64ISAR1_EL1_API |
+					  ID_AA64ISAR1_EL1_GPA |
+					  ID_AA64ISAR1_EL1_GPI;
 
-	return mrs(ID_AA64ISAR1_EL1) & id_pauth;
+	const unsigned long isar2_pauth = ID_AA64ISAR2_EL1_APA3 |
+					  ID_AA64ISAR2_EL1_GPA3;
+
+	return (mrs(ID_AA64ISAR1_EL1) & isar1_pauth) ||
+	       (mrs(ID_AA64ISAR2_EL1) & isar2_pauth);
 }
 
 void cpu_init_el3(void)
