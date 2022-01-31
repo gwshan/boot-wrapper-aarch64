@@ -162,8 +162,16 @@ $(COMMON_SRC):
 model.lds: $(LD_SCRIPT) Makefile
 	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) $(XEN) -DXEN_OFFSET=$(XEN_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -DTEXT_LIMIT=$(TEXT_LIMIT) -P -C -o $@ $<
 
+# Run dtc with an given command line option to check support for it.
+define test-dtc-option
+$(if $(shell echo "/dts-v1/;/{};" | $(DTC) $(1) -o /dev/null 2>&1),,$(1))
+endef
+
+DTC_NOWARN  = $(call test-dtc-option,-Wno-clocks_property)
+DTC_NOWARN += $(call test-dtc-option,-Wno-gpios_property)
+
 fdt.dtb: $(KERNEL_DTB) Makefile
-	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) $(PSCI_NODE) }; $(CPU_NODES)" ) | $(DTC) -O dtb -o $@ -
+	( $(DTC) -O dts -I dtb $(KERNEL_DTB) ; echo "/ { $(CHOSEN_NODE) $(PSCI_NODE) }; $(CPU_NODES)" ) | $(DTC) -O dtb -o $@ $(DTC_NOWARN) -
 
 # The filesystem archive might not exist if INITRD is not being used
 .PHONY: all clean $(FILESYSTEM)
