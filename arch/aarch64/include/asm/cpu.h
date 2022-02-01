@@ -49,6 +49,7 @@
 #define SCR_EL3_FGTEN			BIT(27)
 #define SCR_EL3_ECVEN			BIT(28)
 #define SCR_EL3_TME			BIT(34)
+#define SCR_EL3_EnTP2			BIT(41)
 
 #define HCR_EL2_RES1			BIT(1)
 
@@ -70,7 +71,11 @@
 #define ID_AA64MMFR0_EL1_ECV		BITS(63, 60)
 
 #define ID_AA64PFR1_EL1_MTE		BITS(11, 8)
+#define ID_AA64PFR1_EL1_SME		BITS(27, 24)
 #define ID_AA64PFR0_EL1_SVE		BITS(35, 32)
+
+#define ID_AA64SMFR0_EL1		s3_0_c0_c4_5
+#define ID_AA64SMFR0_EL1_FA64		BIT(63)
 
 /*
  * Initial register values required for the boot-wrapper to run out-of-reset.
@@ -96,6 +101,7 @@
 #define SPSR_EL2H		(9 << 0)	/* EL2 Handler mode */
 #define SPSR_HYP		(0x1a << 0)	/* M[3:0] = hyp, M[4] = AArch32 */
 
+#define CPTR_EL3_ESM		(1 << 12)
 #define CPTR_EL3_EZ		(1 << 8)
 
 #define ICC_SRE_EL2		S3_4_C12_C9_5
@@ -106,6 +112,10 @@
 
 #define ZCR_EL3			s3_6_c1_c2_0
 #define ZCR_EL3_LEN_MAX		0xf
+
+#define SMCR_EL3		s3_6_c1_c2_6
+#define SMCR_EL3_FA64		(1 << 31)
+#define SMCR_EL3_LEN_MAX	0xf
 
 #define ID_AA64ISAR2_EL1	s3_0_c0_c6_2
 

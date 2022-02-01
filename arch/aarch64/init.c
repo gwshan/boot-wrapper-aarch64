@@ -47,6 +47,7 @@ void cpu_init_el3(void)
 	unsigned long scr = SCR_EL3_RES1 | SCR_EL3_NS | SCR_EL3_HCE;
 	unsigned long mdcr = 0;
 	unsigned long cptr = 0;
+	unsigned long smcr = 0;
 
 	if (cpu_has_pauth())
 		scr |= SCR_EL3_APK | SCR_EL3_API;
@@ -93,6 +94,27 @@ void cpu_init_el3(void)
 		 * will constrain to the actual limit.
 		 */
 		msr(ZCR_EL3, ZCR_EL3_LEN_MAX);
+	}
+
+	if (mrs_field(ID_AA64PFR1_EL1, SME)) {
+		cptr |= CPTR_EL3_ESM;
+		msr(CPTR_EL3, cptr);
+		isb();
+
+		scr |= SCR_EL3_EnTP2;
+		msr(SCR_EL3, scr);
+		isb();
+
+		/*
+		 * Write the maximum possible vector length, hardware
+		 * will constrain to the actual limit.
+		 */
+		smcr = SMCR_EL3_LEN_MAX;
+
+		if (mrs_field(ID_AA64SMFR0_EL1, FA64))
+			smcr |= SMCR_EL3_FA64;
+
+		msr(SMCR_EL3, smcr);
 	}
 
 	msr(CNTFRQ_EL0, COUNTER_FREQ);
