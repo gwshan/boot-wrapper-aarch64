@@ -88,6 +88,10 @@ void cpu_init_el3(void)
 		cptr |= CPTR_EL3_EZ;
 		msr(CPTR_EL3, cptr);
 		isb();
+		/*
+		 * Write the maximum possible vector length, hardware
+		 * will constrain to the actual limit.
+		 */
 		msr(ZCR_EL3, ZCR_EL3_LEN_MAX);
 	}
 
