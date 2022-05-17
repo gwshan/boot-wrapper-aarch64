@@ -22,7 +22,7 @@ ASM_FUNC(find_logical_id)
 	mov	x1, xzr
 1:	mov	x3, #NR_CPUS	// check we haven't walked off the end of the array
 	cmp	x1, x3
-	b.gt	3f
+	b.ge	3f
 	ldr	x3, [x2, x1, lsl #3]
 	cmp	x3, x0
 	b.eq	2f

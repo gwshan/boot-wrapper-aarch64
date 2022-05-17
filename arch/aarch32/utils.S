@@ -24,7 +24,7 @@ ASM_FUNC(find_logical_id)
 1:	mov	r3, #NR_CPUS
 
 	cmp	r1, r3
-	bgt	3f
+	bge	3f
 	ldr	r3, [r2, r1, lsl #2]
 	cmp	r3, r0
 	beq	2f
