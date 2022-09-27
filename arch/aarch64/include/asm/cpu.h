@@ -49,6 +49,7 @@
 #define SCR_EL3_FGTEN			BIT(27)
 #define SCR_EL3_ECVEN			BIT(28)
 #define SCR_EL3_TME			BIT(34)
+#define SCR_EL3_HXEn			BIT(38)
 #define SCR_EL3_EnTP2			BIT(41)
 
 #define HCR_EL2_RES1			BIT(1)
@@ -69,6 +70,8 @@
 
 #define ID_AA64MMFR0_EL1_FGT		BITS(59, 56)
 #define ID_AA64MMFR0_EL1_ECV		BITS(63, 60)
+
+#define ID_AA64MMFR1_EL1_HCX		BITS(43, 40)
 
 #define ID_AA64PFR1_EL1_MTE		BITS(11, 8)
 #define ID_AA64PFR1_EL1_SME		BITS(27, 24)
