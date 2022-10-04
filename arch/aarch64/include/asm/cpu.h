@@ -117,7 +117,7 @@
 #define ZCR_EL3_LEN_MAX		0xf
 
 #define SMCR_EL3		s3_6_c1_c2_6
-#define SMCR_EL3_FA64		(1 << 31)
+#define SMCR_EL3_FA64		BIT(31)
 #define SMCR_EL3_LEN_MAX	0xf
 
 #define ID_AA64ISAR2_EL1	s3_0_c0_c6_2
