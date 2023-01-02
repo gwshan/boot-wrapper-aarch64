@@ -7,6 +7,9 @@
  * found in the LICENSE.txt file.
  */
 
+#define _STR(s) #s
+#define STR(s) _STR(s)
+
 #ifdef BOOTWRAPPER_32
 OUTPUT_FORMAT("elf32-littlearm")
 OUTPUT_ARCH(arm)
@@ -17,13 +20,13 @@ OUTPUT_ARCH(aarch64)
 TARGET(binary)
 
 #ifdef XEN
-INPUT(XEN)
+INPUT(STR(XEN))
 #endif
-INPUT(KERNEL)
+INPUT(STR(KERNEL))
 INPUT(./fdt.dtb)
 
 #ifdef USE_INITRD
-INPUT(FILESYSTEM)
+INPUT(STR(FILESYSTEM))
 #endif
 
 ENTRY(_start)
@@ -36,14 +39,14 @@ SECTIONS
 	 */
 	.kernel (PHYS_OFFSET + KERNEL_OFFSET): {
 		kernel__start = .;
-		KERNEL
+		STR(KERNEL)
 		kernel__end = .;
 	}
 
 #ifdef XEN
 	.xen (PHYS_OFFSET + XEN_OFFSET): {
 		xen__start = .;
-		XEN
+		STR(XEN)
 		xen__end = .;
 	}
 
@@ -62,7 +65,7 @@ SECTIONS
 #ifdef USE_INITRD
 	.filesystem (PHYS_OFFSET + FS_OFFSET): {
 		filesystem__start = .;
-		FILESYSTEM
+		STR(FILESYSTEM)
 		filesystem__end = .;
 	}
 #endif
