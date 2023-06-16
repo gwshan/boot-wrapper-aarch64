@@ -42,6 +42,16 @@ static inline bool cpu_has_pauth(void)
 	       (mrs(ID_AA64ISAR2_EL1) & isar2_pauth);
 }
 
+static inline bool cpu_has_permission_indirection(void)
+{
+	const unsigned long mask = ID_AA64MMFR3_EL1_S1PIE |
+				   ID_AA64MMFR3_EL1_S2PIE |
+				   ID_AA64MMFR3_EL1_S1POE |
+				   ID_AA64MMFR3_EL1_S2POE;
+
+	return mrs(ID_AA64MMFR3_EL1) & mask;
+}
+
 void cpu_init_el3(void)
 {
 	unsigned long scr = SCR_EL3_RES1 | SCR_EL3_NS | SCR_EL3_HCE;
@@ -69,6 +79,9 @@ void cpu_init_el3(void)
 		msr(TCR2_EL2, 0);
 		msr(TCR2_EL1, 0);
 	}
+
+	if (cpu_has_permission_indirection())
+		scr |= SCR_EL3_PIEN;
 
 	if (mrs_field(ID_AA64PFR1_EL1, MTE) >= 2)
 		scr |= SCR_EL3_ATA;
