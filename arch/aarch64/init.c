@@ -64,6 +64,12 @@ void cpu_init_el3(void)
 	if (mrs_field(ID_AA64MMFR1_EL1, HCX))
 		scr |= SCR_EL3_HXEn;
 
+	if (mrs_field(ID_AA64MMFR3_EL1, TCRX)) {
+		scr |= SCR_EL3_TCR2EN;
+		msr(TCR2_EL2, 0);
+		msr(TCR2_EL1, 0);
+	}
+
 	if (mrs_field(ID_AA64PFR1_EL1, MTE) >= 2)
 		scr |= SCR_EL3_ATA;
 

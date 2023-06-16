@@ -17,6 +17,9 @@
 #define CURRENTEL_EL2		(2 << 2)
 #define CURRENTEL_EL1		(1 << 2)
 
+#define TCR2_EL2		s3_4_c2_c0_3
+#define TCR2_EL1		s3_0_c2_c0_3
+
 /*
  * RES1 bit definitions definitions as of ARM DDI 0487G.b
  *
@@ -51,6 +54,7 @@
 #define SCR_EL3_TME			BIT(34)
 #define SCR_EL3_HXEn			BIT(38)
 #define SCR_EL3_EnTP2			BIT(41)
+#define SCR_EL3_TCR2EN			BIT(43)
 
 #define HCR_EL2_RES1			BIT(1)
 
@@ -72,6 +76,8 @@
 #define ID_AA64MMFR0_EL1_ECV		BITS(63, 60)
 
 #define ID_AA64MMFR1_EL1_HCX		BITS(43, 40)
+
+#define ID_AA64MMFR3_EL1_TCRX		BITS(4, 0)
 
 #define ID_AA64PFR1_EL1_MTE		BITS(11, 8)
 #define ID_AA64PFR1_EL1_SME		BITS(27, 24)
@@ -121,6 +127,8 @@
 #define SMCR_EL3_LEN_MAX	0xf
 
 #define ID_AA64ISAR2_EL1	s3_0_c0_c6_2
+
+#define ID_AA64MMFR3_EL1	s3_0_c0_c7_3
 
 #define SCTLR_EL1_CP15BEN	(1 << 5)
 
