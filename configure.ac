@@ -27,18 +27,33 @@ AS_IF([test "x$BOOTWRAPPER_ES" = x32 -a "x$KERNEL_ES" != x32],
 
 # Allow a user to pass --with-kernel-dir
 AC_ARG_WITH([kernel-dir],
-	AS_HELP_STRING([--with-kernel-dir], [specify the root Linux kernel build directory (required)]),
+	AS_HELP_STRING([--with-kernel-dir], [specify the root Linux kernel build directory]),
 	AC_SUBST([KERN_DIR], [$withval]),
-	AC_MSG_ERROR([No kernel directory specified. Use --with-kernel-dir]))
-AS_IF([test "x$KERNEL_ES" = x32],
-	[KERN_IMAGE=$KERN_DIR/arch/arm/boot/zImage],
-	[KERN_IMAGE=$KERN_DIR/arch/arm64/boot/Image])
-KERN_DTB=$KERN_DIR/arch/arm64/boot/dts/arm/fvp-base-revc.dtb
+	AC_MSG_NOTICE([Kernel dir not specified])
+)
+
+# Allow a user to pass a specific kernel image file
+AC_ARG_WITH([kernel-image],
+	AS_HELP_STRING([--with-kernel-image], [specify kernel image]),
+	AC_SUBST([KERN_IMAGE], [$withval]),
+	AS_IF([test "x$KERN_DIR" != "x"],
+		AS_IF([test "x$KERNEL_ES" = x32],
+			[KERN_IMAGE=$KERN_DIR/arch/arm/boot/zImage],
+			[KERN_IMAGE=$KERN_DIR/arch/arm64/boot/Image]
+		),
+		AC_MSG_ERROR([No kernel image specified. Use --with-kernel-image or --with-kernel-dir])
+	)
+)
 
 # Allow the user to override the default DTB
 AC_ARG_WITH([dtb],
 	AS_HELP_STRING([--with-dtb], [Specify a particular DTB to use]),
-	[KERN_DTB="$withval"])
+	[KERN_DTB="$withval"],
+	AS_IF([test "x$KERN_DIR" != "x"],
+		[KERN_DTB=$KERN_DIR/arch/arm64/boot/dts/arm/fvp-base-revc.dtb],
+		AC_MSG_ERROR([No DTB specified. Use --with-dtb or --with-kernel-dir])
+	)
+)
 
 AC_ARG_WITH([xen],
 	AS_HELP_STRING([--with-xen], [Compile for Xen, and specify a particular Xen to use]),
@@ -51,11 +66,6 @@ AS_IF([test "x$X_IMAGE" == "x"], [],
 )
 AC_SUBST([XEN_IMAGE], [$X_IMAGE])
 AM_CONDITIONAL([XEN], [test "x$X_IMAGE" != "x"])
-
-# Ensure that the user has provided us with a sane kernel dir.
-if ! test -d $KERN_DIR; then
-	AC_MSG_ERROR([Could not find Linux kernel dir: $KERN_DIR.])
-fi
 
 AC_MSG_CHECKING([whether DTB file exists])
 if ! test -f $KERN_DTB; then
@@ -126,7 +136,7 @@ AC_PROG_SED
 AC_PROG_LN_S
 AC_PATH_PROG([DTC], dtc, error, [$PATH$PATH_SEPARATOR$KERN_DIR/scripts/dtc])
 if test "x$DTC" = "xerror"; then
-	AC_MSG_ERROR([cannot find the device tree compiler (dtc)])
+	AC_MSG_ERROR([cannot find the device tree compiler (dtc). Use --with-kernel-dir or put dtc on the PATH])
 fi
 AC_CHECK_TOOL(LD, ld)
 
@@ -139,8 +149,10 @@ echo ""
 echo "  Boot wrapper configuration"
 echo "  =========================="
 echo ""
-echo "  Linux kernel build dir:            ${KERN_DIR}"
+echo "  Linux kernel build dir:            ${KERN_DIR:-NONE}"
+echo "  Linux kernel image:                ${KERN_IMAGE}"
 echo "  Device tree blob:                  ${KERN_DTB}"
+echo "  Device tree compiler:              ${DTC}"
 echo "  Linux kernel command line:         ${CMDLINE}"
 echo "  Embedded initrd:                   ${FILESYSTEM:-NONE}"
 echo "  Use PSCI?                          ${USE_PSCI}"
