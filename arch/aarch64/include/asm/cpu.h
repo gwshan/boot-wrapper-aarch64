@@ -30,8 +30,8 @@
 	 BIT(11) | BIT(5) | BIT(4))
 
 #define SCTLR_EL2_RES1							\
-	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(20) | BIT(18) |	\
-	 BIT(16) | BIT(11) | BIT(5) | BIT(4))
+	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(18) | BIT(16) |	\
+	 BIT(11) | BIT(5) | BIT(4))
 
 #define SCTLR_EL1_RES1							\
 	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(20) | BIT(11) |	\
