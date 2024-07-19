@@ -12,7 +12,7 @@
 #include <compiler.h>
 #include <stdbool.h>
 
-void __noreturn spin(unsigned long *mbox, unsigned long invalid, int is_entry);
+void __noreturn spin(unsigned long *mbox, unsigned long invalid);
 
 void __noreturn first_spin(unsigned int cpu, unsigned long *mbox,
 			   unsigned long invalid_addr);

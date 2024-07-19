@@ -57,7 +57,7 @@ static int psci_cpu_off(void)
 
 	branch_table[cpu] = PSCI_ADDR_INVALID;
 
-	spin(branch_table + cpu, PSCI_ADDR_INVALID, 0);
+	spin(branch_table + cpu, PSCI_ADDR_INVALID);
 
 	unreachable();
 }

@@ -27,7 +27,7 @@ const unsigned long id_table[] = { CPU_IDS };
  * @invalid: value of an invalid address, 0 or -1 depending on the boot method
  * @is_entry: when true, pass boot parameters to the kernel, instead of 0
  */
-void __noreturn spin(unsigned long *mbox, unsigned long invalid, int is_entry)
+void __noreturn spin(unsigned long *mbox, unsigned long invalid)
 {
 	unsigned long addr = invalid;
 
@@ -35,13 +35,6 @@ void __noreturn spin(unsigned long *mbox, unsigned long invalid, int is_entry)
 		wfe();
 		addr = *mbox;
 	}
-
-	if (is_entry)
-#ifdef KERNEL_32
-		jump_kernel(addr, 0, ~0, (unsigned long)&dtb, 0);
-#else
-		jump_kernel(addr, (unsigned long)&dtb, 0, 0, 0);
-#endif
 
 	jump_kernel(addr, 0, 0, 0, 0);
 
@@ -60,12 +53,15 @@ void __noreturn first_spin(unsigned int cpu, unsigned long *mbox,
 			   unsigned long invalid)
 {
 	if (cpu == 0) {
-		*mbox = (unsigned long)&entrypoint;
-		sevl();
-		spin(mbox, invalid, 1);
+		unsigned long addr = (unsigned long)&entrypoint;
+#ifdef KERNEL_32
+		jump_kernel(addr, 0, ~0, (unsigned long)&dtb, 0);
+#else
+		jump_kernel(addr, (unsigned long)&dtb, 0, 0, 0);
+#endif
 	} else {
 		*mbox = invalid;
-		spin(mbox, invalid, 0);
+		spin(mbox, invalid);
 	}
 
 	unreachable();
