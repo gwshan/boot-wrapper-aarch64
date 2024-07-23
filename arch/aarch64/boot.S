@@ -31,10 +31,8 @@ ASM_FUNC(_start)
 	b.eq	reset_at_el3
 	cmp	x0, #CURRENTEL_EL2
 	b.eq	reset_at_el2
-	cmp	x0, #CURRENTEL_EL1
-	b.eq	reset_at_el1
 
-	/* Booting at EL0 is not supported */
+	/* Booting at EL1 or EL0 is not supported */
 	b	.
 
 	/*
@@ -72,19 +70,6 @@ reset_at_el2:
 	msr	sctlr_el2, x0
 	isb
 
-	b	reset_no_el3
-
-	/*
-	 * EL1 initialization
-	 */
-reset_at_el1:
-	mov_64	x0, SCTLR_EL1_RESET
-	msr	sctlr_el1, x0
-	isb
-
-	b	reset_no_el3
-
-reset_no_el3:
 	cpuid	x0, x1
 	bl	find_logical_id
 	cmp	x0, #MPIDR_INVALID
