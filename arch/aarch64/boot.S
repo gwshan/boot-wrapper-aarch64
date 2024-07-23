@@ -76,10 +76,6 @@ reset_at_el2:
 	b.eq	err_invalid_id
 	bl	setup_stack
 
-	mov	w0, #1
-	ldr	x1, =flag_no_el3
-	str	w0, [x1]
-
 	bl	cpu_init_bootwrapper
 
 	bl	cpu_init_arch
@@ -111,18 +107,11 @@ ASM_FUNC(jump_kernel)
 	bl	find_logical_id
 	bl	setup_stack		// Reset stack pointer
 
-	ldr	w0, flag_no_el3
-	cmp	w0, #0			// Prepare Z flag
-
 	mov	x0, x20
 	mov	x1, x21
 	mov	x2, x22
 	mov	x3, x23
-
-	b.eq	1f
-	br	x19			// No EL3
-
-1:	mov	x4, #SPSR_KERNEL
+	mov	x4, #SPSR_KERNEL
 
 	/*
 	 * If bit 0 of the kernel address is set, we're entering in AArch32
@@ -130,13 +119,18 @@ ASM_FUNC(jump_kernel)
 	 */
 	bfi	x4, x19, #5, #1
 
+	mrs	x5, CurrentEL
+	cmp	x5, #CURRENTEL_EL3
+	b.eq	eret_at_el3
+	cmp	x5, #CURRENTEL_EL2
+	b.eq	eret_at_el2
+	b	.			// Not possible
+
+eret_at_el3:
 	msr	elr_el3, x19
 	msr	spsr_el3, x4
 	eret
-
-	.ltorg
-
-	.data
-	.align 3
-flag_no_el3:
-	.long 0
+eret_at_el2:
+	msr	elr_el2, x19
+	msr	spsr_el2, x4
+	eret
