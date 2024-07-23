@@ -52,7 +52,7 @@ static inline bool cpu_has_permission_indirection(void)
 	return mrs(ID_AA64MMFR3_EL1) & mask;
 }
 
-void cpu_init_el3(void)
+static void cpu_init_el3(void)
 {
 	unsigned long scr = SCR_EL3_RES1 | SCR_EL3_NS | SCR_EL3_HCE;
 	unsigned long mdcr = 0;
@@ -153,8 +153,6 @@ void cpu_init_el3(void)
 
 		msr(SMCR_EL3, smcr);
 	}
-
-	msr(CNTFRQ_EL0, COUNTER_FREQ);
 }
 
 #ifdef PSCI
@@ -171,3 +169,11 @@ bool cpu_init_psci_arch(void)
 	return true;
 }
 #endif
+
+void cpu_init_arch(void)
+{
+	if (mrs(CurrentEL) == CURRENTEL_EL3)
+		cpu_init_el3();
+
+	msr(CNTFRQ_EL0, COUNTER_FREQ);
+}

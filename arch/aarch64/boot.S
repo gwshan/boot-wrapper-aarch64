@@ -51,7 +51,7 @@ reset_at_el3:
 
 	bl	cpu_init_bootwrapper
 
-	bl	cpu_init_el3
+	bl	cpu_init_arch
 
 	bl	gic_secure_init
 
@@ -81,6 +81,8 @@ reset_at_el2:
 	str	w0, [x1]
 
 	bl	cpu_init_bootwrapper
+
+	bl	cpu_init_arch
 
 	b	start_bootmethod
 
