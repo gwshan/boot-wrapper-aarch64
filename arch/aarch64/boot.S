@@ -43,19 +43,7 @@ reset_at_el3:
 	msr	sctlr_el3, x0
 	isb
 
-	cpuid	x0, x1
-	bl	find_logical_id
-	cmp	x0, #MPIDR_INVALID
-	b.eq	err_invalid_id
-	bl	setup_stack
-
-	bl	cpu_init_bootwrapper
-
-	bl	cpu_init_arch
-
-	bl	gic_secure_init
-
-	b	start_bootmethod
+	b	reset_common
 
 	/*
 	 * EL2 initialization
@@ -70,6 +58,9 @@ reset_at_el2:
 	msr	sctlr_el2, x0
 	isb
 
+	b	reset_common
+
+reset_common:
 	cpuid	x0, x1
 	bl	find_logical_id
 	cmp	x0, #MPIDR_INVALID

@@ -53,22 +53,14 @@ reset_at_svc:
 	movs	pc, lr
 
 reset_at_mon:
-	cpuid	r0, r1
-	bl	find_logical_id
-	cmp	r0, #MPIDR_INVALID
-	beq	err_invalid_id
-
-	bl	setup_stack
-
-	bl	cpu_init_bootwrapper
-
-	bl	cpu_init_arch
-
-	bl	gic_secure_init
-
-	b	start_bootmethod
+	// TODO initialise monitor state
+	b	reset_common
 
 reset_at_hyp:
+	// TODO initialise hyp state
+	b	reset_common
+
+reset_common:
 	cpuid	r0, r1
 	bl	find_logical_id
 	cmp	r0, #MPIDR_INVALID

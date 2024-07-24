@@ -7,6 +7,7 @@
  * found in the LICENSE.txt file.
  */
 #include <cpu.h>
+#include <gic.h>
 #include <platform.h>
 #include <stdbool.h>
 
@@ -172,8 +173,10 @@ bool cpu_init_psci_arch(void)
 
 void cpu_init_arch(void)
 {
-	if (mrs(CurrentEL) == CURRENTEL_EL3)
+	if (mrs(CurrentEL) == CURRENTEL_EL3) {
 		cpu_init_el3();
+		gic_secure_init();
+	}
 
 	msr(CNTFRQ_EL0, COUNTER_FREQ);
 }

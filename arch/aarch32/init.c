@@ -7,6 +7,7 @@
  * found in the LICENSE.txt file.
  */
 #include <cpu.h>
+#include <gic.h>
 #include <platform.h>
 #include <stdbool.h>
 
@@ -56,8 +57,10 @@ bool cpu_init_psci_arch(void)
 
 void cpu_init_arch(void)
 {
-	if (read_cpsr_mode() == PSR_MON)
+	if (read_cpsr_mode() == PSR_MON) {
 		cpu_init_monitor();
+		gic_secure_init();
+	}
 
 	mcr(CNTFRQ, COUNTER_FREQ);
 }

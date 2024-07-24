@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include <cpu.h>
-#include <asm/gic-v3.h>
+#include <gic.h>
 #include <asm/io.h>
 
 #define GICD_CTLR			0x0
