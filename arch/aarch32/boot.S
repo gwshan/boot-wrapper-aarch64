@@ -31,7 +31,28 @@
 	 *   PSCI is not supported when entered in this mode.
 	 */
 ASM_FUNC(_start)
-	/* Stack initialisation */
+	mrs	r0, cpsr
+	and	r0, #PSR_MODE_MASK
+	cmp	r0, #PSR_SVC
+	beq	reset_at_svc
+	cmp	r0, #PSR_HYP
+	beq	reset_at_hyp
+
+	/* Booting at other modes is not supported */
+	b	.
+
+reset_at_svc:
+	/*
+	 * When entered in Secure SVC mode we must switch to monitor mode to
+	 * configure SCR.NS. Switch to monitor mode ASAP to simplify later
+	 * code.
+	 */
+	adr	lr, reset_at_mon
+	ldr	r0, =(PSR_A | PSR_I | PSR_F | PSR_MON)
+	msr	spsr, r0
+	movs	pc, lr
+
+reset_at_mon:
 	cpuid	r0, r1
 	bl	find_logical_id
 	cmp	r0, #MPIDR_INVALID
@@ -39,35 +60,27 @@ ASM_FUNC(_start)
 
 	bl	setup_stack
 
-	mrs	r0, cpsr
-	and	r0, #PSR_MODE_MASK
+	bl	cpu_init_bootwrapper
 
-	cmp	r0, #PSR_HYP
-	bne	_switch_monitor
+	bl	cpu_init_secure_pl1
+
+	bl	gic_secure_init
+
+	b	start_bootmethod
+
+reset_at_hyp:
+	cpuid	r0, r1
+	bl	find_logical_id
+	cmp	r0, #MPIDR_INVALID
+	beq	err_invalid_id
+
+	bl	setup_stack
 
 	mov	r0, #1
 	ldr	r1, =flag_no_el3
 	str	r0, [r1]
 
 	bl	cpu_init_bootwrapper
-
-	b	start_bootmethod
-
-_switch_monitor:
-	adr	lr, _monitor
-	ldr	r0, =(PSR_A | PSR_I | PSR_F | PSR_MON)
-	msr	spsr, r0
-	movs	pc, lr
-
-_monitor:
-	/* Move the stack to Monitor mode*/
-	mrs	sp, sp_svc
-
-	bl	cpu_init_secure_pl1
-
-	bl	cpu_init_bootwrapper
-
-	bl	gic_secure_init
 
 	b	start_bootmethod
 
