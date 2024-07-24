@@ -76,10 +76,6 @@ reset_at_hyp:
 
 	bl	setup_stack
 
-	mov	r0, #1
-	ldr	r1, =flag_no_el3
-	str	r0, [r1]
-
 	bl	cpu_init_bootwrapper
 
 	bl	cpu_init_arch
@@ -96,9 +92,10 @@ err_invalid_id:
 	 * r1-r3, sp[0]: kernel arguments
 	 */
 ASM_FUNC(jump_kernel)
-	sub	sp, #4				@ Ignore fourth argument
-	push	{r0 - r3}
-	mov	r5, sp
+	mov	r4, r0
+	mov	r5, r1
+	mov	r6, r2
+	mov	r7, r3
 
 	ldr	r0, =HSCTLR_KERNEL
 	mcr	p15, 4, r0, c1, c0, 0		@ HSCTLR
@@ -111,23 +108,28 @@ ASM_FUNC(jump_kernel)
 	bl	find_logical_id
 	bl	setup_stack
 
-	ldr	lr, [r5], #4
-	ldm	r5, {r0 - r2}
+	mov	r0, r5
+	mov	r1, r6
+	mov	r2, r7
+	ldr	r3, =SPSR_KERNEL
 
-	ldr	r4, =flag_no_el3
-	ldr	r4, [r4]
-	cmp	r4, #1
-	bxeq	lr				@ no EL3
-
-	ldr	r4, =SPSR_KERNEL
 	/* Return in thumb2 mode when bit 0 of address is 1 */
-	tst	lr, #1
-	orrne	r4, #PSR_T
+	tst	r4, #1
+	orrne	r3, #PSR_T
 
-	msr	spsr_cxf, r4
+	mrs	r5, cpsr
+	and	r5, #PSR_MODE_MASK
+	cmp	r5, #PSR_MON
+	beq	eret_at_mon
+	cmp	r5, #PSR_HYP
+	beq	eret_at_hyp
+	b	.
+
+eret_at_mon:
+	mov	lr, r4
+	msr	spsr_mon, r3
 	movs	pc, lr
-
-	.section .data
-	.align 2
-flag_no_el3:
-	.long 0
+eret_at_hyp:
+	msr	elr_hyp, r4
+	msr	spsr_hyp, r3
+	eret
