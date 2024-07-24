@@ -62,7 +62,7 @@ reset_at_mon:
 
 	bl	cpu_init_bootwrapper
 
-	bl	cpu_init_secure_pl1
+	bl	cpu_init_arch
 
 	bl	gic_secure_init
 
@@ -81,6 +81,8 @@ reset_at_hyp:
 	str	r0, [r1]
 
 	bl	cpu_init_bootwrapper
+
+	bl	cpu_init_arch
 
 	b	start_bootmethod
 

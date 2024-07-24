@@ -29,7 +29,7 @@ void announce_arch(void)
 	print_string("\r\n");
 }
 
-void cpu_init_secure_pl1(void)
+static void cpu_init_monitor(void)
 {
 	unsigned long scr = SCR_NS | SCR_HCE;
 	unsigned long nsacr = NSACR_CP10 | NSACR_CP11;
@@ -37,8 +37,6 @@ void cpu_init_secure_pl1(void)
 	mcr(SCR, scr);
 
 	mcr(NSACR, nsacr);
-
-	mcr(CNTFRQ, COUNTER_FREQ);
 }
 
 #ifdef PSCI
@@ -55,3 +53,11 @@ bool cpu_init_psci_arch(void)
 	return true;
 }
 #endif
+
+void cpu_init_arch(void)
+{
+	if (read_cpsr_mode() == PSR_MON)
+		cpu_init_monitor();
+
+	mcr(CNTFRQ, COUNTER_FREQ);
+}
