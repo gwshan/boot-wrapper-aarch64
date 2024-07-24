@@ -17,10 +17,6 @@ void __noreturn spin(unsigned long *mbox, unsigned long invalid);
 void __noreturn first_spin(unsigned int cpu, unsigned long *mbox,
 			   unsigned long invalid_addr);
 
-void cpu_init_bootmethod(unsigned int cpu);
-
-#ifdef PSCI
-bool cpu_init_psci_arch(void);
-#endif
+void cpu_init_arch(unsigned int cpu);
 
 #endif

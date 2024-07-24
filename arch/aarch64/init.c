@@ -6,6 +6,7 @@
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE.txt file.
  */
+#include <boot.h>
 #include <cpu.h>
 #include <gic.h>
 #include <platform.h>
@@ -159,24 +160,28 @@ static void cpu_init_el3(void)
 #ifdef PSCI
 extern char psci_vectors[];
 
-bool cpu_init_psci_arch(void)
+static void cpu_init_psci_arch(unsigned int cpu)
 {
-	if (mrs(CurrentEL) != CURRENTEL_EL3)
-		return false;
+	if (mrs(CurrentEL) != CURRENTEL_EL3) {
+		print_cpu_warn(cpu, "PSCI could not be initialized (not booted at EL3).\r\n");
+		return;
+	}
 
 	msr(VBAR_EL3, (unsigned long)psci_vectors);
 	isb();
-
-	return true;
 }
+#else
+static void cpu_init_psci_arch(unsigned int cpu) { }
 #endif
 
-void cpu_init_arch(void)
+void cpu_init_arch(unsigned int cpu)
 {
 	if (mrs(CurrentEL) == CURRENTEL_EL3) {
 		cpu_init_el3();
 		gic_secure_init();
 	}
+
+	cpu_init_psci_arch(cpu);
 
 	msr(CNTFRQ_EL0, COUNTER_FREQ);
 }

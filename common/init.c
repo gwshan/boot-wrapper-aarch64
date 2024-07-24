@@ -43,18 +43,48 @@ static void announce_objects(void)
 
 void announce_arch(void);
 
+static void init_bootwrapper(void)
+{
+	init_uart();
+	announce_bootwrapper();
+	announce_arch();
+	announce_objects();
+	init_platform();
+}
+
+static void cpu_init_self(unsigned int cpu)
+{
+	print_string("CPU");
+	print_uint_dec(cpu);
+	print_string(": (MPIDR ");
+	print_ulong_hex(read_mpidr());
+	print_string(") initializing...\r\n");
+
+	cpu_init_arch(cpu);
+}
+
 void cpu_init_bootwrapper(void)
 {
+	static volatile unsigned int cpu_next = 0;
 	unsigned int cpu = this_cpu_logical_id();
 
-	if (cpu == 0) {
-		init_uart();
-		announce_bootwrapper();
-		announce_arch();
-		announce_objects();
-		print_string("\r\n");
-		init_platform();
-	}
+	if (cpu == 0)
+		init_bootwrapper();
 
-	cpu_init_bootmethod(cpu);
+	while (cpu_next != cpu)
+		wfe();
+
+	cpu_init_self(cpu);
+
+	cpu_next = cpu + 1;
+	dsb(sy);
+	sev();
+
+	if (cpu != 0)
+		return;
+
+	while (cpu_next != NR_CPUS)
+		wfe();
+
+	print_string("All CPUs initialized. Entering kernel...\r\n\r\n");
 }

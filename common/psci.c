@@ -87,17 +87,3 @@ void __noreturn psci_first_spin(void)
 
 	unreachable();
 }
-
-void cpu_init_bootmethod(unsigned int cpu)
-{
-	if (cpu_init_psci_arch())
-		return;
-
-	if (cpu == 0) {
-		print_string("WARNING: PSCI could not be initialized. Boot may fail\r\n\r\n");
-		return;
-	}
-
-	while (1)
-		wfe();
-}

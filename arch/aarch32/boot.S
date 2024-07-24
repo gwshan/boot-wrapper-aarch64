@@ -70,8 +70,6 @@ reset_common:
 
 	bl	cpu_init_bootwrapper
 
-	bl	cpu_init_arch
-
 	b	start_bootmethod
 
 err_invalid_id:
