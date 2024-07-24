@@ -65,6 +65,41 @@ void print_ulong_hex(unsigned long val)
 	}
 }
 
+// 2^32 is 4,294,967,296
+#define DEC_CHARS_PER_UINT	10
+
+void print_uint_dec(unsigned int val)
+{
+	char digits[DEC_CHARS_PER_UINT];
+	int d = 0;
+
+	do {
+		digits[d] = val % 10;
+		val /= 10;
+		d++;
+	} while (val);
+
+	while (d--) {
+		print_char('0' + digits[d]);
+	}
+}
+
+void print_cpu_warn(unsigned int cpu, const char *str)
+{
+	print_string("CPU");
+	print_uint_dec(cpu);
+	print_string(" WARNING: ");
+	print_string(str);
+}
+
+void print_cpu_msg(unsigned int cpu, const char *str)
+{
+	print_string("CPU");
+	print_uint_dec(cpu);
+	print_string(": ");
+	print_string(str);
+}
+
 void init_uart(void)
 {
 	/*

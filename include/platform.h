@@ -12,6 +12,10 @@
 void print_char(char c);
 void print_string(const char *str);
 void print_ulong_hex(unsigned long val);
+void print_uint_dec(unsigned int val);
+
+void print_cpu_warn(unsigned int cpu, const char *str);
+void print_cpu_msg(unsigned int cpu, const char *str);
 
 void init_uart(void);
 
