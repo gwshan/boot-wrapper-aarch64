@@ -128,6 +128,9 @@ AC_ARG_ENABLE([gicv3],
 AM_CONDITIONAL([GICV3], [test "x$USE_GICV3" = "xyes"])
 AS_IF([test "x$USE_GICV3" = "xyes"], [], [USE_GICV3=no])
 
+# Ensure AC_PROG_CC tries to build a bare-metal object
+CFLAGS="${CFLAGS} -ffreestanding -nostdlib"
+
 # Ensure that we have all the needed programs
 AC_PROG_CC
 AC_PROG_CPP
