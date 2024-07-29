@@ -58,6 +58,7 @@
 #define SCR_EL3_TME			BIT(34)
 #define SCR_EL3_HXEn			BIT(38)
 #define SCR_EL3_EnTP2			BIT(41)
+#define SCR_EL3_RCWMASKEn		BIT(42)
 #define SCR_EL3_TCR2EN			BIT(43)
 #define SCR_EL3_SCTLR2En		BIT(44)
 #define SCR_EL3_PIEN			BIT(45)
@@ -95,6 +96,7 @@
 
 #define ID_AA64PFR1_EL1_MTE		BITS(11, 8)
 #define ID_AA64PFR1_EL1_SME		BITS(27, 24)
+#define ID_AA64PFR1_EL1_THE		BITS(51, 48)
 #define ID_AA64PFR0_EL1_SVE		BITS(35, 32)
 
 #define ID_AA64SMFR0_EL1		s3_0_c0_c4_5

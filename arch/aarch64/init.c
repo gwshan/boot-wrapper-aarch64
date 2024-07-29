@@ -98,6 +98,9 @@ void cpu_init_el3(void)
 	if (mrs_field(ID_AA64MMFR3_EL1, D128))
 		scr |= SCR_EL3_D128En;
 
+	if (mrs_field(ID_AA64PFR1_EL1, THE))
+		scr |= SCR_EL3_RCWMASKEn;
+
 	msr(SCR_EL3, scr);
 
 	msr(CPTR_EL3, cptr);
