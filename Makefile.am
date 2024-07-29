@@ -9,6 +9,16 @@
 
 SCRIPT_DIR	:= $(top_srcdir)/scripts
 
+# test-cmd cmd,val-if-success,val-if-success,val-if-failure
+define test-cmd
+$(if $(shell { $(1); } >/dev/null 2>&1 && echo "success"),$(2),$(3))
+endef
+
+# Run dtc with an given command line option to check support for it.
+define test-dtc-option
+$(call test-cmd,echo "/dts-v1/;/{};" | $(DTC) $(1) -o /dev/null,$(1),)
+endef
+
 # VE
 PHYS_OFFSET	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findmem.pl $(KERNEL_DTB))
 UART_BASE	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
@@ -161,11 +171,6 @@ $(COMMON_SRC):
 
 model.lds: $(LD_SCRIPT) Makefile
 	$(CPP) $(CPPFLAGS) -ansi -DPHYS_OFFSET=$(PHYS_OFFSET) -DMBOX_OFFSET=$(MBOX_OFFSET) -DKERNEL_OFFSET=$(KERNEL_OFFSET) -DFDT_OFFSET=$(FDT_OFFSET) -DFS_OFFSET=$(FS_OFFSET) $(XEN) -DXEN_OFFSET=$(XEN_OFFSET) -DKERNEL=$(KERNEL_IMAGE) -DFILESYSTEM=$(FILESYSTEM) -DTEXT_LIMIT=$(TEXT_LIMIT) -P -C -o $@ $<
-
-# Run dtc with an given command line option to check support for it.
-define test-dtc-option
-$(if $(shell echo "/dts-v1/;/{};" | $(DTC) $(1) -o /dev/null 2>&1),,$(1))
-endef
 
 DTC_NOWARN  = $(call test-dtc-option,-Wno-clocks_property)
 DTC_NOWARN += $(call test-dtc-option,-Wno-gpios_property)
