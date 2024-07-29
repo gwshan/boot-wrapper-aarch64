@@ -19,6 +19,10 @@ define test-dtc-option
 $(call test-cmd,echo "/dts-v1/;/{};" | $(DTC) $(1) -o /dev/null,$(1),)
 endef
 
+define test-ld-option
+$(call test-cmd,$(LD) $(1) --help,$(1),)
+endef
+
 # VE
 PHYS_OFFSET	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findmem.pl $(KERNEL_DTB))
 UART_BASE	:= $(shell perl -I $(SCRIPT_DIR) $(SCRIPT_DIR)/findbase.pl $(KERNEL_DTB) 0 'arm,pl011')
@@ -141,6 +145,7 @@ CFLAGS		+= -fno-stack-protector
 CFLAGS		+= -ffunction-sections -fdata-sections
 CFLAGS		+= -fno-pic -fno-pie
 LDFLAGS		+= --gc-sections
+LDFLAGS		+= $(call test-ld-option,--no-warn-rwx-segments)
 
 OBJ		:= $(addprefix $(ARCH_SRC),$(ARCH_OBJ)) $(addprefix $(COMMON_SRC),$(COMMON_OBJ))
 
