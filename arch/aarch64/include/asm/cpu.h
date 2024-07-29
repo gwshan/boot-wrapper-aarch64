@@ -20,6 +20,9 @@
 #define TCR2_EL2		s3_4_c2_c0_3
 #define TCR2_EL1		s3_0_c2_c0_3
 
+#define SCTLR2_EL1		s3_0_c1_c0_3
+#define SCTLR2_EL2		s3_4_c1_c0_3
+
 /*
  * RES1 bit definitions definitions as of ARM DDI 0487G.b
  *
@@ -56,6 +59,7 @@
 #define SCR_EL3_HXEn			BIT(38)
 #define SCR_EL3_EnTP2			BIT(41)
 #define SCR_EL3_TCR2EN			BIT(43)
+#define SCR_EL3_SCTLR2En		BIT(44)
 #define SCR_EL3_PIEN			BIT(45)
 
 #define HCR_EL2_RES1			BIT(1)
@@ -80,7 +84,8 @@
 
 #define ID_AA64MMFR1_EL1_HCX		BITS(43, 40)
 
-#define ID_AA64MMFR3_EL1_TCRX		BITS(4, 0)
+#define ID_AA64MMFR3_EL1_TCRX		BITS(3, 0)
+#define ID_AA64MMFR3_EL1_SCTLRX		BITS(7, 4)
 #define ID_AA64MMFR3_EL1_S1PIE		BITS(11, 8)
 #define ID_AA64MMFR3_EL1_S2PIE		BITS(15, 12)
 #define ID_AA64MMFR3_EL1_S1POE		BITS(19, 16)

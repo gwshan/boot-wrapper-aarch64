@@ -89,6 +89,12 @@ void cpu_init_el3(void)
 	if (!kernel_is_32bit())
 		scr |= SCR_EL3_RW;
 
+	if (mrs_field(ID_AA64MMFR3_EL1, SCTLRX)) {
+		scr |= SCR_EL3_SCTLR2En;
+		msr(SCTLR2_EL2, 0);
+		msr(SCTLR2_EL1, 0);
+	}
+
 	msr(SCR_EL3, scr);
 
 	msr(CPTR_EL3, cptr);
