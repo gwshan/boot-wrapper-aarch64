@@ -95,6 +95,9 @@ void cpu_init_el3(void)
 		msr(SCTLR2_EL1, 0);
 	}
 
+	if (mrs_field(ID_AA64MMFR3_EL1, D128))
+		scr |= SCR_EL3_D128En;
+
 	msr(SCR_EL3, scr);
 
 	msr(CPTR_EL3, cptr);
