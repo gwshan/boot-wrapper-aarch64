@@ -91,6 +91,15 @@ static void cpu_init_el3(void)
 	if (mrs_field(ID_AA64MMFR0_EL1, FGT))
 		scr |= SCR_EL3_FGTEN;
 
+	if (mrs_field(ID_AA64MMFR0_EL1, FGT) >= 2) {
+		scr |= SCR_EL3_FGTEN2;
+		msr(HDFGRTR2_EL2, 0);
+		msr(HDFGWTR2_EL2, 0);
+		msr(HFGITR2_EL2, 0);
+		msr(HFGRTR2_EL2, 0);
+		msr(HFGWTR2_EL2, 0);
+	}
+
 	if (mrs_field(ID_AA64MMFR0_EL1, ECV) >= 2)
 		scr |= SCR_EL3_ECVEN;
 

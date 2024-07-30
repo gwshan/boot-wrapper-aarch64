@@ -23,6 +23,12 @@
 #define SCTLR2_EL1		s3_0_c1_c0_3
 #define SCTLR2_EL2		s3_4_c1_c0_3
 
+#define HDFGRTR2_EL2		s3_4_c3_c1_0
+#define HDFGWTR2_EL2		s3_4_c3_c1_1
+#define HFGRTR2_EL2		s3_4_c3_c1_2
+#define HFGWTR2_EL2		s3_4_c3_c1_3
+#define HFGITR2_EL2		s3_4_c3_c1_7
+
 /*
  * RES1 bit definitions definitions as of ARM DDI 0487G.b
  *
@@ -68,6 +74,7 @@
 #define SCR_EL3_SCTLR2En		BIT(44)
 #define SCR_EL3_PIEN			BIT(45)
 #define SCR_EL3_D128En			BIT(47)
+#define SCR_EL3_FGTEN2			BIT(59)
 
 #define VTCR_EL2_MSA			BIT(31)
 
