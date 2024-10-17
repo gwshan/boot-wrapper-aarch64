@@ -100,7 +100,12 @@ ASM_FUNC(jump_kernel)
 	mov	x1, x21
 	mov	x2, x22
 	mov	x3, x23
+#if defined(BOOTWRAPPER_64R)
+	// On Armv8-R Linux needs to be booted at EL1
+	mov	x4, #SPSR_KERNEL_EL1
+#else
 	mov	x4, #SPSR_KERNEL
+#endif
 
 	/*
 	 * If bit 0 of the kernel address is set, we're entering in AArch32

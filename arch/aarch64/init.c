@@ -54,6 +54,27 @@ static inline bool cpu_has_permission_indirection(void)
 	return mrs(ID_AA64MMFR3_EL1) & mask;
 }
 
+static bool cpu_has_scxt(void)
+{
+	unsigned long csv2 = mrs_field(ID_AA64PFR0_EL1, CSV2);
+
+	if (csv2 >= 2)
+		return true;
+	if (csv2 < 1)
+		return false;
+
+	return mrs_field(ID_AA64PFR1_EL1, CSV2_frac) >= 2;
+}
+
+static inline bool bootwrapper_is_r_class(void)
+{
+#ifdef BOOTWRAPPER_64R
+	return true;
+#else
+	return false;
+#endif
+}
+
 static void cpu_init_el3(void)
 {
 	unsigned long scr = SCR_EL3_RES1 | SCR_EL3_NS | SCR_EL3_HCE;
@@ -157,6 +178,47 @@ static void cpu_init_el3(void)
 	}
 }
 
+void cpu_init_el2_armv8r(void)
+{
+	unsigned long hcr = mrs(hcr_el2);
+
+	/* On Armv8-R ID_AA64MMFR0_EL1[51:48] == 0xF */
+	if (mrs_field(ID_AA64MMFR0_EL1, MSA) != 0xF) {
+		print_string("ID_AA64MMFR0_EL1.MSA != 0xF, not R-class\r\n");
+		while (1)
+			wfe();
+	}
+
+	if (mrs_field(ID_AA64MMFR0_EL1, MSA_frac) < 2) {
+		print_string("ID_AA64MMFR0_EL1.MSA_frac < 2, EL1&0 VMSA not supported\r\n");
+		while (1)
+			wfe();
+	}
+
+	msr(vpidr_el2, mrs(midr_el1));
+	msr(vmpidr_el2, mrs(mpidr_el1));
+
+	msr(VSCTLR_EL2, 0);
+	msr(VSTCR_EL2, VSTCR_EL2_RESET);
+	msr(vtcr_el2, VTCR_EL2_MSA);
+
+	msr(cntvoff_el2, 0);
+	msr(cptr_el2, CPTR_EL2_RESET);
+	msr(mdcr_el2, 0);
+
+	if (cpu_has_scxt())
+		hcr |= HCR_EL2_EnSCXT;
+
+	if (mrs_field(ID_AA64PFR0_EL1, RAS) >= 2)
+		hcr |= HCR_EL2_FIEN;
+
+	if (cpu_has_pauth())
+		hcr |= HCR_EL2_APK | HCR_EL2_API;
+
+	msr(hcr_el2, hcr);
+	isb();
+}
+
 #ifdef PSCI
 extern char psci_vectors[];
 
@@ -176,9 +238,13 @@ static void cpu_init_psci_arch(unsigned int cpu) { }
 
 void cpu_init_arch(unsigned int cpu)
 {
-	if (mrs(CurrentEL) == CURRENTEL_EL3) {
+	if (!bootwrapper_is_r_class() && mrs(CurrentEL) == CURRENTEL_EL3) {
 		cpu_init_el3();
 		gic_secure_init();
+	}
+
+	if (bootwrapper_is_r_class() && mrs(CurrentEL) == CURRENTEL_EL2) {
+		cpu_init_el2_armv8r();
 	}
 
 	cpu_init_psci_arch(cpu);

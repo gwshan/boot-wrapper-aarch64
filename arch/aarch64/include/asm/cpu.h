@@ -32,9 +32,14 @@
 	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(18) | BIT(16) |	\
 	 BIT(11) | BIT(5) | BIT(4))
 
+#define CPTR_EL2_NO_E2H_RES1					\
+	(BITS(13,12) | BIT(9) | BITS(7,0))
+
 #define SCTLR_EL2_RES1							\
 	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(18) | BIT(16) |	\
 	 BIT(11) | BIT(5) | BIT(4))
+
+#define VSTCR_EL2_RES1							(BIT(31))
 
 #define SCTLR_EL1_RES1							\
 	(BIT(29) | BIT(28) | BIT(23) | BIT(22) | BIT(20) | BIT(11) |	\
@@ -64,7 +69,13 @@
 #define SCR_EL3_PIEN			BIT(45)
 #define SCR_EL3_D128En			BIT(47)
 
+#define VTCR_EL2_MSA			BIT(31)
+
 #define HCR_EL2_RES1			BIT(1)
+#define HCR_EL2_APK			BIT(40)
+#define HCR_EL2_API			BIT(41)
+#define HCR_EL2_FIEN			BIT(47)
+#define HCR_EL2_EnSCXT			BIT(53)
 
 #define ID_AA64DFR0_EL1_PMSVER		BITS(35, 32)
 #define ID_AA64DFR0_EL1_TRACEBUFFER	BITS(47, 44)
@@ -81,6 +92,8 @@
 #define ID_AA64ISAR2_EL1_GPA3		BITS(11, 8)
 #define ID_AA64ISAR2_EL1_APA3		BITS(15, 12)
 
+#define ID_AA64MMFR0_EL1_MSA		BITS(51, 48)
+#define ID_AA64MMFR0_EL1_MSA_frac	BITS(55, 52)
 #define ID_AA64MMFR0_EL1_FGT		BITS(59, 56)
 #define ID_AA64MMFR0_EL1_ECV		BITS(63, 60)
 
@@ -96,8 +109,12 @@
 
 #define ID_AA64PFR1_EL1_MTE		BITS(11, 8)
 #define ID_AA64PFR1_EL1_SME		BITS(27, 24)
+#define ID_AA64PFR1_EL1_CSV2_frac	BITS(35, 32)
 #define ID_AA64PFR1_EL1_THE		BITS(51, 48)
+
+#define ID_AA64PFR0_EL1_RAS		BITS(31, 28)
 #define ID_AA64PFR0_EL1_SVE		BITS(35, 32)
+#define ID_AA64PFR0_EL1_CSV2		BITS(59, 56)
 
 #define ID_AA64SMFR0_EL1		s3_0_c0_c4_5
 #define ID_AA64SMFR0_EL1_FA64		BIT(63)
@@ -106,7 +123,9 @@
  * Initial register values required for the boot-wrapper to run out-of-reset.
  */
 #define SCTLR_EL3_RESET		SCTLR_EL3_RES1
+#define CPTR_EL2_RESET		CPTR_EL2_NO_E2H_RES1
 #define SCTLR_EL2_RESET		SCTLR_EL2_RES1
+#define VSTCR_EL2_RESET		VSTCR_EL2_RES1
 #define SCTLR_EL1_RESET		SCTLR_EL1_RES1
 #define HCR_EL2_RESET		HCR_EL2_RES1
 
@@ -123,6 +142,7 @@
 #define SPSR_I			(1 << 7)	/* IRQ masked */
 #define SPSR_F			(1 << 6)	/* FIQ masked */
 #define SPSR_T			(1 << 5)	/* Thumb */
+#define SPSR_EL1H		(5 << 0)	/* EL1 Handler mode */
 #define SPSR_EL2H		(9 << 0)	/* EL2 Handler mode */
 #define SPSR_HYP		(0x1a << 0)	/* M[3:0] = hyp, M[4] = AArch32 */
 
@@ -134,6 +154,9 @@
 #define ICC_CTLR_EL1		S3_0_C12_C12_4
 #define ICC_CTLR_EL3		S3_6_C12_C12_4
 #define ICC_PMR_EL1		S3_0_C4_C6_0
+
+#define VSTCR_EL2		s3_4_c2_c6_2
+#define VSCTLR_EL2		s3_4_c2_c0_0
 
 #define ZCR_EL3			s3_6_c1_c2_0
 #define ZCR_EL3_LEN_MAX		0xf
@@ -162,6 +185,7 @@
 #else
 #define SCTLR_EL1_KERNEL	SCTLR_EL1_RES1
 #define SPSR_KERNEL		(SPSR_A | SPSR_D | SPSR_I | SPSR_F | SPSR_EL2H)
+#define SPSR_KERNEL_EL1		(SPSR_A | SPSR_D | SPSR_I | SPSR_F | SPSR_EL1H)
 #endif
 
 #ifndef __ASSEMBLY__
