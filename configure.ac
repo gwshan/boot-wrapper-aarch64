@@ -107,6 +107,9 @@ AC_ARG_ENABLE([psci],
 	[USE_PSCI=$enableval], [USE_PSCI="yes"])
 AM_CONDITIONAL([PSCI], [test "x$USE_PSCI" = "xyes"])
 AS_IF([test "x$USE_PSCI" = "xyes"], [], [USE_PSCI=no])
+AS_IF([test "x$USE_ARCH" = "xaarch64-r"],
+	AC_SUBST([PSCI_METHOD], [hvc]), AC_SUBST([PSCI_METHOD], [smc])
+)
 
 AS_IF([test "x$USE_PSCI" != "xyes" -a "x$KERNEL_ES" = "x32"],
 	[AC_MSG_ERROR([With an AArch32 kernel, boot method must be PSCI.])]

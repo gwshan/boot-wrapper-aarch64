@@ -71,7 +71,7 @@ ARCH_OBJ	+= psci.o
 COMMON_OBJ	+= psci.o
 PSCI_NODE	:= psci {				\
 			compatible = \"arm,psci\";	\
-			method = \"smc\";		\
+			method = \"$(PSCI_METHOD)\";	\
 			cpu_on = <$(PSCI_CPU_ON)>;	\
 			cpu_off = <$(PSCI_CPU_OFF)>;	\
 		   };

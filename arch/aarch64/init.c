@@ -224,13 +224,20 @@ extern char psci_vectors[];
 
 static void cpu_init_psci_arch(unsigned int cpu)
 {
-	if (mrs(CurrentEL) != CURRENTEL_EL3) {
-		print_cpu_warn(cpu, "PSCI could not be initialized (not booted at EL3).\r\n");
+	if (!bootwrapper_is_r_class() && mrs(CurrentEL) == CURRENTEL_EL3) {
+		msr(VBAR_EL3, (unsigned long)psci_vectors);
+		isb();
 		return;
 	}
 
-	msr(VBAR_EL3, (unsigned long)psci_vectors);
-	isb();
+	if (bootwrapper_is_r_class() && mrs(CurrentEL) == CURRENTEL_EL2) {
+		msr(VBAR_EL2, (unsigned long)psci_vectors);
+		isb();
+		return;
+	}
+
+	print_cpu_warn(cpu, "PSCI could not be initialized (not booted at EL3).\r\n");
+
 }
 #else
 static void cpu_init_psci_arch(unsigned int cpu) { }
