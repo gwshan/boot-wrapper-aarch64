@@ -9,9 +9,18 @@ AC_INIT([boot-wrapper], [v0.2])
 
 AM_INIT_AUTOMAKE([foreign])
 
-AC_ARG_ENABLE([aarch32-bw],
-	      AS_HELP_STRING([--enable-aarch32-bw], [build a 32-bit boot-wrapper]),
-	      [BOOTWRAPPER_ES=32], [BOOTWRAPPER_ES=64])
+# Allow a user to pass --with-bw-arch={aarch64-a,aarch32-a}
+AC_ARG_WITH([bw-arch],
+	AS_HELP_STRING([--with-bw-arch], [specify boot-wrapper architecture: aarch64-a (default) or aarch32-a]),
+	[case "${withval}" in
+		no|yes|aarch64-a) USE_ARCH=aarch64-a ;;
+		aarch32-a) USE_ARCH=aarch32-a ;;
+		*) AC_MSG_ERROR([Bad value "${withval}" for --with-bw-arch. Use "aarch64-a" or "aarch32-a"]) ;;
+	esac])
+
+AS_IF([test "x$USE_ARCH" = "xaarch32-a"],
+	[BOOTWRAPPER_ES=32], [BOOTWRAPPER_ES=64]
+)
 AM_CONDITIONAL([BOOTWRAPPER_32], [test "x$BOOTWRAPPER_ES" = "x32"])
 
 AC_ARG_ENABLE([aarch32-kernel],
