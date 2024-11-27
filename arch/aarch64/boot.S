@@ -100,7 +100,7 @@ ASM_FUNC(jump_kernel)
 	mov	x1, x21
 	mov	x2, x22
 	mov	x3, x23
-#if defined(BOOTWRAPPER_64R)
+#if defined(BOOTWRAPPER_64R) && !defined(XEN)
 	// On Armv8-R Linux needs to be booted at EL1
 	mov	x4, #SPSR_KERNEL_EL1
 #else

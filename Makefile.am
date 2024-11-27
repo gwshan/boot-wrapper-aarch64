@@ -127,6 +127,7 @@ XEN_CHOSEN	:= xen,xen-bootargs = \"$(XEN_CMDLINE)\";		\
 			compatible = \"xen,linux-zimage\", \"xen,multiboot-module\"; \
 			reg = <0x0 $(DOM0_OFFSET) 0x0 $(KERNEL_SIZE)>;	\
 		   };
+DEFINES		+= -DXEN
 endif
 
 if INITRD

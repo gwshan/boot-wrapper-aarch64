@@ -115,6 +115,10 @@ AS_IF([test "x$USE_PSCI" != "xyes" -a "x$KERNEL_ES" = "x32"],
 	[AC_MSG_ERROR([With an AArch32 kernel, boot method must be PSCI.])]
 )
 
+AS_IF([test "x$USE_PSCI" = "xyes" -a "x$USE_ARCH" = "xaarch64-r" -a "x$X_IMAGE" != "x"],
+	[AC_MSG_ERROR([With an AArch64-R Xen, boot method must be spin-table.])]
+)
+
 # Allow a user to pass --with-initrd
 AC_ARG_WITH([initrd],
 	AS_HELP_STRING([--with-initrd], [embed an initrd in the kernel image]),
