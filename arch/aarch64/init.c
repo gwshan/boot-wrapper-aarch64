@@ -152,6 +152,9 @@ static void cpu_init_el3(void)
 	if (mrs_field(ID_AA64DFR0_EL1, DEBUGVER) >= 11)
 		mdcr |= MDCR_EL3_EBWE;
 
+	if (mrs_field(ID_AA64DFR0_EL1, PMUVER) >= 0b1001)
+		mdcr |= MDCR_EL3_EnPM2;
+
 	msr(MDCR_EL3, mdcr);
 
 	if (mrs_field(ID_AA64PFR0_EL1, SVE)) {
